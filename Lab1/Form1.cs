@@ -335,18 +335,18 @@ namespace Lab1
 
                 if (position + 1 < text.Length && text.Substring(position, 2) == "::")
                 {
-                    tokens.Add(new Token((int)TokenType.operato,TokenType.operato, "::", position,position+1, 2));
+                    tokens.Add(new Token((int)TokenType.оператор,TokenType.оператор, "::", position,position+1, 2));
                     position += 2;
                     
                 }
                 else if (position + 7 < text.Length && text.Substring(position, 7) == "COMPLEX")
                 {
-                    tokens.Add(new Token((int)TokenType.structure,TokenType.structure, "COMPLEX", position,position+5,7));
+                    tokens.Add(new Token((int)TokenType.структура,TokenType.структура, "COMPLEX", position,position+5,7));
                     position += 7;
                 }
                 else if (text[position] == ' ')
                 {
-                    tokens.Add(new Token((int)TokenType.probel,TokenType.probel, " ", position,position, 1));
+                    tokens.Add(new Token((int)TokenType.пробел,TokenType.пробел, " ", position,position, 1));
                     position++;
                 }
                 else if (char.IsLetter(currentChar))
@@ -358,21 +358,21 @@ namespace Lab1
                         position++;
                     }
                     string identifier = text.Substring(identifierStart, position - identifierStart);
-                    tokens.Add(new Token((int)TokenType.idenficakate,TokenType.idenficakate, identifier, identifierStart, position -1,position+identifierStart));
+                    tokens.Add(new Token((int)TokenType.идетификатор,TokenType.идетификатор, identifier, identifierStart, position -1,position+identifierStart));
                 }
                 else if (currentChar == '=')
                 {
-                    tokens.Add(new Token((int)TokenType.assigment,TokenType.assigment, "=", position,position+1, 1));
+                    tokens.Add(new Token((int)TokenType.оператор_присваивания,TokenType.оператор_присваивания, "=", position,position+1, 1));
                     position++;
                 }
                 else if (currentChar == '(')
                 {
-                    tokens.Add(new Token((int)TokenType.openBroadcastArgument,TokenType.openBroadcastArgument, "(", position, position, 1));
+                    tokens.Add(new Token((int)TokenType.открывающая_скобка,TokenType.открывающая_скобка, "(", position, position, 1));
                     position++;
                 }
                 else if (currentChar == ')')
                 {
-                    tokens.Add(new Token((int)TokenType.cloaseBroadcastArgument,TokenType.cloaseBroadcastArgument, ")", position,position, 1));
+                    tokens.Add(new Token((int)TokenType.Закрывающая_скобка,TokenType.Закрывающая_скобка, ")", position,position, 1));
                     position++;
                 }
                 else if (char.IsDigit(currentChar) || currentChar == '.')
@@ -407,26 +407,27 @@ namespace Lab1
                         number1 = text.Substring(numberStart, position - numberStart);
                     }
 
-                    tokens.Add(new Token((int)TokenType.unintsiunsignedInt, TokenType.unintsiunsignedInt, number1, numberStart, position - 1, position - numberStart));
+                    tokens.Add(new Token((int)TokenType.Целое_без_знака, TokenType.Целое_без_знака, number1, numberStart, position - 1, position - numberStart));
                 }
                 else if (currentChar == ',')
                 {
-                    tokens.Add(new Token((int)TokenType.separationParam,TokenType.separationParam, ",", position,position, 1));
+                    tokens.Add(new Token((int)TokenType.символ_разделения_параметров,TokenType.символ_разделения_параметров, ",", position,position, 1));
                     position++;
                 }
                 else if (currentChar == '-')
                 {
-                    tokens.Add(new Token((int)TokenType.separationFractionAndWholesMinus,TokenType.separationFractionAndWholesMinus, "-", position, position, 1));
+                    tokens.Add(new Token((int)TokenType.Минус,TokenType.Минус, "-", position, position, 1));
                     position++;
                 }
                 else if (currentChar == '+')
                 {
-                    tokens.Add(new Token((int)TokenType.separationFractionAndWholesPlus, TokenType.separationFractionAndWholesPlus, "+", position, position, 1));
+                    tokens.Add(new Token((int)TokenType.Плюс, TokenType.Плюс, "+", position, position, 1));
                     position++;
                 }
                 else
                 {
-                    tokens.Add(new Token((int)TokenType.ERROR, TokenType.ERROR, "ERROR", position, position,1));
+                    int numberStart = position;
+                    tokens.Add(new Token((int)TokenType.ERROR, TokenType.ERROR, text.Substring(numberStart), position, position,1));
                     position++;
                 }
             }
@@ -435,17 +436,17 @@ namespace Lab1
     
     private enum TokenType
             {
-            structure=1,                      // Сomplex
-            probel=4,                         // пробел
-            operato=3,                        // двойные двоиточие
-            idenficakate=2,                   // идентификатор
-            assigment=5,                      // оператор присвяивания
-            openBroadcastArgument=6,          // открывающая скобка
-            cloaseBroadcastArgument=7,        // закрывающая скобка
-            unintsiunsignedInt=11,             // целое без знака
-            separationParam=10,                // символ разделения параметров (,)
-            separationFractionAndWholesMinus=8,     // Минус
-            separationFractionAndWholesPlus =9,    // Плюс
+            структура=1,                            // Сomplex
+            пробел=4,                               // пробел
+            оператор=3,                             // двойные двоиточие
+            идетификатор=2,                         // идентификатор
+            оператор_присваивания=5,                // оператор присвяивания
+            открывающая_скобка=6,                   // открывающая скобка
+            Закрывающая_скобка=7,                   // закрывающая скобка
+            Целое_без_знака=11,                     // целое без знака
+            символ_разделения_параметров = 10,      // символ разделения параметров (,)
+            Минус=8,                                // Минус
+            Плюс =9,                                // Плюс
                 ERROR =12
             }
     class Token
