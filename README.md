@@ -55,3 +55,8 @@
 
 ![image](https://github.com/RYYSLIN/Lab1/assets/160394383/461fbc2f-4ecc-4360-938a-c8e27a5c3afa)
 
+3) Пример из моей программы
+
+ 
+ ![image](https://github.com/RYYSLIN/Lab1/assets/160394383/f1bf076b-b76b-43ba-80d4-afa790e2b418)
+
