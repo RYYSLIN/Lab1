@@ -276,6 +276,7 @@
             this.пускToolStripMenuItem.Name = "пускToolStripMenuItem";
             this.пускToolStripMenuItem.Size = new System.Drawing.Size(55, 24);
             this.пускToolStripMenuItem.Text = "Пуск";
+            this.пускToolStripMenuItem.Click += new System.EventHandler(this.пускToolStripMenuItem_Click);
             // 
             // справкаToolStripMenuItem
             // 
@@ -445,6 +446,7 @@
             this.richTextBox1.Size = new System.Drawing.Size(1155, 384);
             this.richTextBox1.TabIndex = 4;
             this.richTextBox1.Text = "";
+            this.richTextBox1.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
             // 
             // dataGridView1
             // 
@@ -452,6 +454,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Enabled = false;
             this.dataGridView1.Location = new System.Drawing.Point(3, 3);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersWidth = 51;
