@@ -60,3 +60,44 @@
  
  ![image](https://github.com/RYYSLIN/Lab1/assets/160394383/f1bf076b-b76b-43ba-80d4-afa790e2b418)
 
+3----------------------------------------------------------------------------------------------------------
+Лабораторная работа 3
+
+1) Грамматика
+   G[<I>]: 
+Vт = { ‘COMPEX’,‘a’…’z’, ‘A’…’Z’, ‘0’…’9’, ‘:’ ,  ‘,’ , ‘+’, ‘-‘, ‘=’ , ‘(’ , ‘)’, ‘_’} 
+Vn = { <I>, iD , ASSIGN , SIGN1,SIGN2, DECMAL1,DECMAL2,DECMAL1REM,DECMAL2REM, OPENBRACKET,CLOSEBRACKET , NUMBER1,NUMBER1REM,NUMBER2,NUMBER2REM} 
+P = { 
+1.<I> → ‘COMPLEX’ ASSIGN 
+2.ASSIGN → ‘::’ID 
+3.ID -> letter IDREM
+4.IDREM -> ( letter | | digit | _ )IDREM | '=' OPENBRACKET 
+5.OPENBRACKET → ‘(’  SIGN1,
+6.SIGN1 -> [+ | -] NUMBER1
+7.NUMBER1 -> digit NUMBER1REM 
+8.NUMBER1REM -> digit NUMBER1REM | '.' DECMAL1 | ',' SIGN2
+9.DECMAL1 → digit  DECMAL1REM
+10.DECMAL1REM -> digit DECMAL1REM | ',' SIGN2
+11.SIGN2 -> [+ | -] NUMBER2
+12.NUMBER2 -> digit NUMBER2REM 
+13.NUMBER2REM -> digit NUMBER2REM | '.' DECMAL2 | ')'
+14.DECMAL1 → digit  DECMAL1REM
+15.DECMAL1REM -> digit DECMAL1REM | ')'
+
+2)Конечный автомат
+
+
+
+
+![image](https://github.com/RYYSLIN/Lab1/assets/160394383/256a4a2b-21f5-47fc-b749-3cd4a937b004)
+
+
+3) Окно вывода: верно и неверно
+
+
+
+![image](https://github.com/RYYSLIN/Lab1/assets/160394383/59e1e6d9-2ff1-47ce-a965-70b99fc820ba)
+
+
+
+![image](https://github.com/RYYSLIN/Lab1/assets/160394383/809894ed-162c-483c-a9a3-2576a5d274bb)
