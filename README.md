@@ -61,11 +61,13 @@
  ![image](https://github.com/RYYSLIN/Lab1/assets/160394383/f1bf076b-b76b-43ba-80d4-afa790e2b418)
 
 3----------------------------------------------------------------------------------------------------------
+
+
 Лабораторная работа 3
 
 1) Грамматика
-   G[<I>]: 
-Vт = { ‘COMPEX’,‘a’…’z’, ‘A’…’Z’, ‘0’…’9’, ‘:’ ,  ‘,’ , ‘+’, ‘-‘, ‘=’ , ‘(’ , ‘)’, ‘_’} 
+   G[ <I> ]: 
+Vt = { ‘COMPEX’,‘a’…’z’, ‘A’…’Z’, ‘0’…’9’, ‘:’ ,  ‘,’ , ‘+’, ‘-‘, ‘=’ , ‘(’ , ‘)’, ‘_’} 
 Vn = { <I>, iD , ASSIGN , SIGN1,SIGN2, DECMAL1,DECMAL2,DECMAL1REM,DECMAL2REM, OPENBRACKET,CLOSEBRACKET , NUMBER1,NUMBER1REM,NUMBER2,NUMBER2REM} 
 P = { 
 1.<I> → ‘COMPLEX’ ASSIGN 
@@ -84,6 +86,12 @@ P = {
 14.DECMAL1 → digit  DECMAL1REM
 15.DECMAL1REM -> digit DECMAL1REM | ')'
 
+
+2)Примеры верных строк:
+COMPLEX::z=(2.0,3.0)
+COMPLEX::z=(+2.0,-3.0)
+COMPLEX:: XEZ121 =(+42,-4.0)
+
 2)Конечный автомат
 
 
@@ -101,3 +109,9 @@ P = {
 
 
 ![image](https://github.com/RYYSLIN/Lab1/assets/160394383/809894ed-162c-483c-a9a3-2576a5d274bb)
+
+
+
+
+![image](https://github.com/RYYSLIN/Lab1/assets/160394383/7c627b31-6448-46ae-a49f-116eaaf4cc5a)
+
