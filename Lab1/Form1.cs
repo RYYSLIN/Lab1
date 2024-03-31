@@ -855,6 +855,7 @@ namespace Lab1
                                 EndPosition = token.ColumnNext +1,  
                                 Info = token.Value
                             });
+                            d = 0;
                             expectingNumber2 = false;
                             expectingCloseBracket = false;
                         }
