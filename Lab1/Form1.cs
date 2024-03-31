@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Net.Mime.MediaTypeNames;
@@ -306,12 +307,37 @@ namespace Lab1
         private void пускToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Scan();
-
         }
+
+        private void RewriteText()
+        {
+            string originalText = richTextBox1.Text;
+
+            string pattern = @"\b\w+\b";
+
+            string rewrittenText = Regex.Replace(originalText, pattern, " $&");
+
+            richTextBox1.Clear();
+            richTextBox1.AppendText(rewrittenText.Trim());
+        }
+
+        private void buttonRewrite_Click(object sender, EventArgs e)
+        {
+            RewriteText();
+        }
+
         private void Scan()
         {
             string text = richTextBox1.Text;
             List<Token> tokens = LexicalAnalysis(text);
+
+            bool identifierAdded = AddMissingIdentifiers(tokens);
+
+            bool hasAllTypes = HasAllTokenTypes(tokens);
+
+            dataGridView1.DataSource = null;
+            dataGridView1.Rows.Clear();
+
             DataTable dataTable = new DataTable();
             dataTable.Columns.Add("Код", typeof(string));
             dataTable.Columns.Add("Тип", typeof(string));
@@ -323,10 +349,92 @@ namespace Lab1
             {
                 dataTable.Rows.Add(token.Cod, token.Type.ToString(), token.Value, token.Column + 1, token.ColumnNext + 1);
             }
+
             dataGridView1.DataSource = dataTable;
+
             DisplayParsedTokens(tokens);
+
+            if (identifierAdded)
+            {
+                MessageBox.Show("Ваш идентификатор не был найден.\n  Был добавлен 'A'.");
+            }
+            if (!hasAllTypes)
+            {
+                ClearAndDisplayCorrectedText(tokens);
+            }
         }
 
+        private bool HasAllTokenTypes(List<Token> tokens)
+        {
+            
+            foreach (TokenType tokenType in Enum.GetValues(typeof(TokenType)))
+            {
+                if (!tokens.Exists(t => t.Type == tokenType))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private bool AddMissingIdentifiers(List<Token> tokens)
+        {
+            if (tokens.Exists(t => t.Type == TokenType.идетификатор))
+            {
+                return false;
+            }
+
+            bool identifierAdded = false;
+
+            for (int i = 0; i < tokens.Count; i++)
+            {
+                if (tokens[i].Type == TokenType.оператор && !tokens.Exists(t => t.Type == TokenType.идетификатор))
+                {
+                    Token identifierToken = new Token(2, TokenType.идетификатор, "A", tokens[i].ColumnNext, tokens[i].ColumnNext + 1, 2);
+                    tokens.Insert(i + 1, identifierToken);
+                    identifierAdded = true;
+                }
+                else if (tokens[i].Type == TokenType.оператор_присваивания && !tokens.Exists(t => t.Type == TokenType.идетификатор))
+                {
+                    Token identifierToken = new Token(2, TokenType.идетификатор, "A", tokens[i].Column, tokens[i].Column, 2);
+                    tokens.Insert(i, identifierToken);
+                    identifierAdded = true;
+                }
+            }
+
+            return identifierAdded;
+        }
+
+        private void ClearAndDisplayCorrectedText(List<Token> tokens)
+        {
+            richTextBox1.Clear();
+            foreach (var token in tokens)
+            {
+                
+                if (token.Value != "missing_identifier")
+                {
+                    richTextBox1.AppendText(token.Value + "");
+                }
+            }
+        }
+
+        private bool IsValidIdentifier(string identifier)
+        {
+            foreach (char c in identifier)
+            {
+                if (!char.IsLetterOrDigit(c) && c != '_')
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private void CorrectToken(Token token)
+        {
+            
+            token.Value = "z_" + token.Value;
+        }
         private List<Token> LexicalAnalysis(string text)
         {
             List<Token> tokens = new List<Token>();    
@@ -354,6 +462,7 @@ namespace Lab1
                 }
                 else if (char.IsLetter(currentChar))
                 {
+                    
                     // Идентификатор
                     int identifierStart = position;
                     while (position < text.Length && (char.IsLetterOrDigit(text[position]) || text[position] == '_'))
@@ -361,6 +470,7 @@ namespace Lab1
                         position++;
                     }
                     string identifier = text.Substring(identifierStart, position - identifierStart);
+                    
                     tokens.Add(new Token((int)TokenType.идетификатор, TokenType.идетификатор, identifier, identifierStart, position - 1, position + identifierStart));
                 }
                 else if (currentChar == '=')
@@ -514,13 +624,13 @@ namespace Lab1
         }
         private List<Token> tokens; 
         private int currentPosition; 
- 
+        
         private List<ParsedToken> ParseTokens(List<Token> tokens)
         {
             List<ParsedToken> parsedTokens = new List<ParsedToken>();
             int lineNumber = 1;
             int Scale = 1;
-            bool exstuct=false;
+            bool exstuct=true;
             bool expectingIdentifier = false;
             bool expectingOperator = false;
             bool expectingOpenBracket = false;
@@ -529,32 +639,62 @@ namespace Lab1
             bool expectingComma = false;
             bool expectingCloseBracket = false;
             bool sihn = false;   // =
-            bool skipSpace = true;
+            bool skipSpace = false;
             bool stuct=false;
             bool Plus = false;
             bool Minus = false;
+            bool Space2 = false; 
+            int d=0;
             foreach (var token in tokens)
             {
-                skipSpace = true;
                 if (token.Type == TokenType.пробел)
                 {
-                    
                     if (skipSpace)
-                        continue;
+                    {
+                        parsedTokens.Add(new ParsedToken
+                        {
+                            Number = lineNumber,
+                            StartPosition = token.Column + 1,
+                            EndPosition = token.ColumnNext + 1,
+                            Info = "Множество пробелов"
+                        });
+                    }
+                    skipSpace = true;
+                    continue;
                 }
                 else
                 {
                     skipSpace = false;
                 }
-
                 switch (token.Type)
                 {
                     case TokenType.структура:
-                        if(!exstuct)
-                        expectingIdentifier = true;
-                        stuct = true;
-                        exstuct=true;
-                        Scale++;
+                        if (exstuct)
+                        {
+                            parsedTokens.Add(new ParsedToken
+                            {
+
+                            });
+                            expectingIdentifier = true;
+                            stuct = true;
+                            exstuct = true;
+                            Scale++;
+                        }
+                        else
+                        {
+
+                            parsedTokens.Add(new ParsedToken
+                            {
+                                Number = lineNumber,
+                                StartPosition = token.Column + 1,
+                                EndPosition = token.ColumnNext + 1,
+                                Info = token.Value
+                            });
+                            
+                            stuct = true;
+                            exstuct = true;
+                            Scale++;
+                        }
                         break;
 
                     case TokenType.оператор:
@@ -564,6 +704,7 @@ namespace Lab1
                             {
                                
                             });
+                           
                             stuct = false;
                             expectingIdentifier = true;
                             Scale++;
@@ -579,11 +720,13 @@ namespace Lab1
                                 Info = token.Value
                             });
                            
+                            stuct = false;
                             expectingIdentifier = true;
                         }
                         break;
 
                     case TokenType.идетификатор:
+                            
                         if (expectingIdentifier)
                         {
                             parsedTokens.Add(new ParsedToken
@@ -594,6 +737,7 @@ namespace Lab1
                             expectingOperator = false;
                             sihn = true;
                             Scale++;
+                            
                         }
                         else
                         {
@@ -610,6 +754,7 @@ namespace Lab1
                             sihn = true;
                         }
                         break;
+                       
                     case TokenType.оператор_присваивания:
                         if (sihn)
                         {
@@ -620,6 +765,7 @@ namespace Lab1
 
 
                             });
+                            
                             Scale++;
                             sihn = false;
                             expectingIdentifier = false;
@@ -635,7 +781,7 @@ namespace Lab1
                                 Info = token.Value
                             });
                             currentPosition += token.Value.Length;
-
+                           
                             expectingIdentifier = false;
                             expectingOpenBracket = true;
                         }
@@ -650,7 +796,7 @@ namespace Lab1
 
 
                             });
-
+                           
                             Scale++;
                             expectingOpenBracket = false;
                             expectingNumber = true;   
@@ -669,6 +815,7 @@ namespace Lab1
                                 Info = token.Value
 
                             });
+                           
                             expectingNumber = true;
                             sihn = false;
                             Minus = true;
@@ -685,6 +832,7 @@ namespace Lab1
 
 
                                 });
+                                
                                 Scale++;
                                 Minus = false;
                                 expectingNumber = true;
@@ -700,6 +848,7 @@ namespace Lab1
                                     EndPosition = token.ColumnNext + 1,
                                     Info = token.Value
                                 });
+                               
                                 expectingNumber = true;
                                 expectingNumber2 = true;
                             }
@@ -716,6 +865,7 @@ namespace Lab1
 
 
                                 });
+                               
                                 Scale++;
                                 Plus = false;
                                 expectingNumber = true;
@@ -731,7 +881,7 @@ namespace Lab1
                                     EndPosition = token.ColumnNext + 1,
                                     Info = token.Value
                                 });
-
+                                
                                 expectingNumber = true;
                                 expectingNumber2 = true;
                             }
@@ -747,6 +897,7 @@ namespace Lab1
 
 
                             });
+                           
                             Scale++;
                             expectingNumber = false;
                             expectingOpenBracket = false;
@@ -763,7 +914,7 @@ namespace Lab1
                                 Info = token.Value
 
                             });
-                           
+                          
                             expectingOpenBracket = false;
                             expectingComma = true;
                         }
@@ -777,6 +928,7 @@ namespace Lab1
 
 
                             });
+                         
                             Scale++;
                             expectingComma = false;
                             expectingNumber = false;
@@ -795,6 +947,7 @@ namespace Lab1
                                 Info = token.Value
 
                             });
+                           
                             expectingNumber = false;
                             expectingNumber2 = true;
                             Minus = true;
@@ -810,6 +963,7 @@ namespace Lab1
                             {
 
                             });
+                          
                             Scale++;
                             expectingNumber2 = false;
                             expectingComma = false;
@@ -825,6 +979,7 @@ namespace Lab1
                                 EndPosition = token.ColumnNext + 1, 
                                 Info = token.Value
                             });
+                           
                             expectingComma = false;
                             expectingCloseBracket = true;
                         }
@@ -839,6 +994,7 @@ namespace Lab1
                                 
                                 
                             });
+                           
                             Scale++;
                             expectingNumber2 = false;
                             expectingCloseBracket = false;
@@ -855,7 +1011,7 @@ namespace Lab1
                                 EndPosition = token.ColumnNext +1,  
                                 Info = token.Value
                             });
-                            d = 0;
+                           
                             expectingNumber2 = false;
                             expectingCloseBracket = false;
                         }
@@ -870,7 +1026,7 @@ namespace Lab1
                                 EndPosition = token.ColumnNext + 1,
                                 Info = token.Value
                             });
-                            currentPosition += token.Value.Length;
+                            currentPosition -= token.Value.Length;
                             break;
                         }
                         else break;
@@ -879,6 +1035,7 @@ namespace Lab1
 
             return parsedTokens;
         }
+
         private void DisplayParsedTokens(List<Token> tokens)
         {
             List<ParsedToken> parsedTokens = ParseTokens(tokens);
@@ -888,8 +1045,8 @@ namespace Lab1
 
             dataGridView2.Columns.Add("Number", "№");
             dataGridView2.Columns.Add("Location", "Местоположение");
-            dataGridView2.Columns.Add("Info", "Информационная строка");
-
+            dataGridView2.Columns.Add("Info", "Неверный фрагмент");
+             
          
             dataGridView2.Columns["Number"].ValueType = typeof(int);
             dataGridView2.Columns["Location"].ValueType = typeof(string);
