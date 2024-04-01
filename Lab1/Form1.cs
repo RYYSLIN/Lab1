@@ -357,11 +357,12 @@ namespace Lab1
             if (identifierAdded)
             {
                 MessageBox.Show("Ваш идентификатор не был найден.\n  Был добавлен 'A'.");
+                if (!hasAllTypes)
+                {
+                    ClearAndDisplayCorrectedText(tokens);
+                }
             }
-            if (!hasAllTypes)
-            {
-                ClearAndDisplayCorrectedText(tokens);
-            }
+            
         }
 
         private bool HasAllTokenTypes(List<Token> tokens)
@@ -555,8 +556,12 @@ namespace Lab1
                 }
                 else
                 {
+                    string currentChar1 = currentChar.ToString();
+                    string Error;
                     int numberStart = position;
-                    tokens.Add(new Token((int)TokenType.ERROR, TokenType.ERROR, text.Substring(numberStart), position, position, 1));
+                    Error = text.Substring(position);
+
+                    tokens.Add(new Token((int)TokenType.ERROR, TokenType.ERROR, currentChar1, numberStart, position,1));
                     position++;
                 }
             }
@@ -688,7 +693,7 @@ namespace Lab1
                                 Number = lineNumber,
                                 StartPosition = token.Column + 1,
                                 EndPosition = token.ColumnNext + 1,
-                                Info = token.Value
+                                Info = token.Value 
                             });
                             
                             stuct = true;
@@ -1024,7 +1029,7 @@ namespace Lab1
                                 Number = lineNumber++,
                                 StartPosition = token.Column + 1,
                                 EndPosition = token.ColumnNext + 1,
-                                Info = token.Value
+                                Info = $"Ошибка {token.Value}"
                             });
                             currentPosition -= token.Value.Length;
                             break;
