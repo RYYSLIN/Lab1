@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Грамматика</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Грамматика</h1>
+    1) Грамматика</br>
+   G[ <I> ]: <br>
+Vt = { ‘COMPEX’,‘a’…’z’, ‘A’…’Z’, ‘0’…’9’, ‘:’ ,  ‘,’ , ‘+’, ‘-‘, ‘=’ , ‘(’ , ‘)’, ‘_’} </br>
+Vn = { <I>, iD , ASSIGN , SIGN1,SIGN2, DECMAL1,DECMAL2,DECMAL1REM,DECMAL2REM, OPENBRACKET,CLOSEBRACKET ,</br> NUMBER1,NUMBER1REM,NUMBER2,NUMBER2REM} </br>
+P = { </br>
+1.<I> → ‘COMPLEX’ ASSIGN </br>
+2.ASSIGN → ‘::’ID </br>
+3.ID -> letter IDREM</br>
+4.IDREM -> ( letter | | digit | _ )IDREM | '=' OPENBRACKET </br>
+5.OPENBRACKET → ‘(’  SIGN1,</br>
+6.SIGN1 -> [+ | -] NUMBER1</br>
+7.NUMBER1 -> digit NUMBER1REM </br>
+8.NUMBER1REM -> digit NUMBER1REM | '.' DECMAL1 | ',' SIGN2</br>
+9.DECMAL1 → digit  DECMAL1REM</br>
+10.DECMAL1REM -> digit DECMAL1REM | ',' SIGN2</br>
+11.SIGN2 -> [+ | -] NUMBER2</br>
+12.NUMBER2 -> digit NUMBER2REM </br>
+13.NUMBER2REM -> digit NUMBER2REM | '.' DECMAL2 | ')'</br>
+14.DECMAL1 → digit  DECMAL1REM</br>
+15.DECMAL1REM -> digit DECMAL1REM | ')'</br>
+    }</br>
+    </div>
+</body>
+</html>

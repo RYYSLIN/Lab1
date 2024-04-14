@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Постановка задачи</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/themes/prism.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        pre {
+            background-color: #ccc; /* измененный цвет фона */
+            border: 1px solid #rrr;
+            padding: 10px;
+            overflow-x: auto;
+        }
+        code {
+            font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Постановка задачи</h1>
+    <h2 id="тема-работы">Тема работы</h2>
+    <p>Разработка текстового редактора с функциями языкового процессора. Объявление и инициализация комплексного числа в языке программирования.</p>
+
+    <h2 id="особенности-языка">Особенности языка</h2>
+    <p>Комплексные числа в языке программирования - это числа, состоящие из действительной и мнимой частей. Обычно они записываются в виде `a + bi`, где `a` и `b` - это действительная и мнимая части соответственно. В вашем случае формат записи выглядит следующим образом:</p>
+
+    <pre><code class="language-sql">COMPLEX:: z =(2.0,3.0);</code></pre>
+
+    <h2 id="примеры-верных-строк">Примеры верных строк из языка</h2>
+
+    <p>В соответствии с разработанной автоматной грамматикой синтаксический анализатор (парсер) комплексных чисел будет считать верными следующие записи:</p>
+
+    <pre><code class="language-sql">COMPLEX:: z =(2.0,3.0);</code></pre>
+
+    <pre><code class="language-sql">COMPLEX:: w =(-1.5,0.0);</code></pre>
+
+    <pre><code class="language-sql">COMPLEX:: z =(0.0,-2.5); COMPLEX:: w =(1.0,1.0);</code></pre>
+
+    <pre><code class="language-sql">COMPLEX:: a =(3.0,4.0); COMPLEX:: b =(5.0,-6.0);</code></pre>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/components/prism-sql.min.js"></script>
+
+</body>
+</html>

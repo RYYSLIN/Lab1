@@ -1,8 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -426,24 +425,7 @@ namespace Lab1
                 }
             }
         }
-        public class HtmlHelper
-        {
-            public static void OpenInBrowser(string path)
-            {
-                if (System.IO.File.Exists(path) || IsUrl(path))
-                {
-                    Process p = new Process();
-                    p.StartInfo = new ProcessStartInfo(path) { UseShellExecute = true };
-                    p.Start();
-                }
-            }
 
-            private static bool IsUrl(string input)
-            {
-                string pattern = @"^(https?|ftp)://[^\s/$.?#].[^\s]*$";
-                return Regex.IsMatch(input, pattern);
-            }
-        }
         private bool IsValidIdentifier(string identifier)
         {
             foreach (char c in identifier)
@@ -579,16 +561,6 @@ namespace Lab1
                     tokens.Add(new Token((int)TokenType.Плюс, TokenType.Плюс, "+", position, position, 1));
                     position++;
                 }
-                else if (currentChar == '*')
-                {
-                    tokens.Add(new Token((int)TokenType.Умножить, TokenType.Умножить, "*", position, position, 1));
-                    position++;
-                }
-                else if (currentChar == '/')
-                {
-                    tokens.Add(new Token((int)TokenType.Разделить, TokenType.Разделить, "/", position, position, 1));
-                    position++;
-                }
                 else
                 {
                     string currentChar1 = currentChar.ToString();
@@ -618,9 +590,7 @@ namespace Lab1
             Плюс = 9,                                // Плюс
             ERROR = 12,
             Целое_без_знака2 = 13,
-            Подчеркивание,
-            Умножить = 16,    // Оператор умножения
-            Разделить = 17   // Оператор деления
+            Подчеркивание
         }
         class Token
         {
@@ -747,10 +717,10 @@ namespace Lab1
                                
                             });
                            
-                            stuct = true;
+                            stuct = false;
                             expectingIdentifier = true;
                             Scale++;
-                            
+
                         }
                         else
                         {
@@ -763,7 +733,7 @@ namespace Lab1
                                 Info = token.Value
                             }); ; 
                            
-                            stuct = true;
+                            stuct = false;
                             expectingIdentifier = true;
                         }
                         break;
@@ -1011,7 +981,6 @@ namespace Lab1
                             expectingNumber2 = false;
                             expectingComma = false;
                             expectingCloseBracket = true;
-                           
                         }
                         else
                         {
@@ -1023,7 +992,7 @@ namespace Lab1
                                 EndPosition = token.ColumnNext + 1, 
                                 Info = token.Value
                             });
-                            
+                           
                             expectingComma = false;
                             expectingCloseBracket = true;
                         }
@@ -1055,7 +1024,7 @@ namespace Lab1
                                 EndPosition = token.ColumnNext +1,  
                                 Info = token.Value
                             });
-                            exstuct = true;
+                           
                             expectingNumber2 = false;
                             expectingCloseBracket = false;
                         }
@@ -1220,8 +1189,8 @@ namespace Lab1
         }
         private void Task()
         {
-      
-            HtmlHelper.OpenInBrowser("Properties\\Task.html\"");
+            System.Diagnostics.Process.Start("\"C:\\Users\\ryysl\\source\\repos\\Lab1\\Lab1\\Properties\\Task.html\"");
+
         }
 
         private void грамматикаToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1230,8 +1199,7 @@ namespace Lab1
         }
         private void Gramm()
         {
-
-            HtmlHelper.OpenInBrowser("Properties\\Grammatic.html\"");
+            System.Diagnostics.Process.Start("\"C:\\Users\\ryysl\\source\\repos\\Lab1\\Lab1\\Properties\\Grammatic.html\"");
         }
 
         private void классификацияГрамматикиToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1240,13 +1208,12 @@ namespace Lab1
         }
         private void KlassicGramm()
         {
-            
-            HtmlHelper.OpenInBrowser("Properties\\ClassifGRAMM.html\"");
+            System.Diagnostics.Process.Start("\"C:\\Users\\ryysl\\source\\repos\\Lab1\\Lab1\\Properties\\ClassifGRAMM.html\"");
         }
 
         private void методАнализаToolStripMenuItem_Click(object sender, EventArgs e)
-        {       
-            HtmlHelper.OpenInBrowser("Properties\\MetodAnaliz.html\"");
+        {
+            System.Diagnostics.Process.Start("\"C:\\Users\\ryysl\\source\\repos\\Lab1\\Lab1\\Properties\\MetodAnaliz.html\"");
         }
 
         private void диагностикаToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1255,8 +1222,7 @@ namespace Lab1
         }
         private void Diagnostika()
         {
-  
-            HtmlHelper.OpenInBrowser("Properties\\Netralization.html\"");
+            System.Diagnostics.Process.Start("\"C:\\Users\\ryysl\\source\\repos\\Lab1\\Lab1\\Properties\\Netralization.html\"");
         }
 
         private void текстовыйToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1265,8 +1231,7 @@ namespace Lab1
         }
         private void TPROMER()
         {
-           
-            HtmlHelper.OpenInBrowser("Properties\\TEST.html\"");
+            System.Diagnostics.Process.Start("\"C:\\Users\\ryysl\\source\\repos\\Lab1\\Lab1\\Properties\\TEST.html\"");
         }
 
         private void списокЛитературыToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1275,17 +1240,16 @@ namespace Lab1
         }
         private void LITER()
         {
-            
-            HtmlHelper.OpenInBrowser("Properties\\LITER.html");
+            System.Diagnostics.Process.Start("\"C:\\Users\\ryysl\\source\\repos\\Lab1\\Lab1\\Properties\\LITER.html\"");
         }
 
         private void исходныйКодПрограммыToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            KAODPROG();
+            KODPROG();
         }
         private void KAODPROG()
         {
-            HtmlHelper.OpenInBrowser("Properties\\KOD.html");
+            System.Diagnostics.Process.Start("\"C:\\Users\\ryysl\\source\\repos\\Lab1\\Lab1\\Properties\\LITER.html\"");
         }
     }
 }

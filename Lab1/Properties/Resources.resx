@@ -46,7 +46,7 @@
     
     mimetype: application/x-microsoft.net.object.binary.base64
     value   : The object must be serialized with 
-            : System.Serialization.Formatters.Binary.BinaryFormatter
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
     
     mimetype: application/x-microsoft.net.object.soap.base64
@@ -60,6 +60,7 @@
             : and then encoded with base64 encoding.
     -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -68,9 +69,10 @@
               <xsd:sequence>
                 <xsd:element name="value" type="xsd:string" minOccurs="0" />
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="name" use="required" type="xsd:string" />
               <xsd:attribute name="type" type="xsd:string" />
               <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="assembly">
@@ -85,9 +87,10 @@
                 <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
                 <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
               <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
               <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
@@ -109,9 +112,114 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Ckaner" xml:space="preserve">
+    <value>スキャナー</value>
+  </data>
+  <data name="CNTRLC" xml:space="preserve">
+    <value>コピー</value>
+  </data>
+  <data name="CNTRLV" xml:space="preserve">
+    <value>ありがとう</value>
+  </data>
+  <data name="ColumnHeader1_Japanese" xml:space="preserve">
+    <value>こんに</value>
+  </data>
+  <data name="Cozdat" xml:space="preserve">
+    <value>作成する</value>
+  </data>
+  <data name="CpicokLIter" xml:space="preserve">
+    <value>参考文献</value>
+  </data>
+  <data name="Cpravka" xml:space="preserve">
+    <value>参照</value>
+  </data>
+  <data name="Delet" xml:space="preserve">
+    <value>消去</value>
+  </data>
+  <data name="Diagnostika" xml:space="preserve">
+    <value>診断とエラーの無力化</value>
+  </data>
+  <data name="EXIT" xml:space="preserve">
+    <value>出口</value>
+  </data>
+  <data name="File" xml:space="preserve">
+    <value>ふじ</value>
+  </data>
+  <data name="Grammatiic" xml:space="preserve">
+    <value>文法</value>
+  </data>
+  <data name="KlassiGRAMMATIC" xml:space="preserve">
+    <value>文法の分類</value>
+  </data>
+  <data name="KODISVOD" xml:space="preserve">
+    <value>ソース</value>
+  </data>
+  <data name="Langvich" xml:space="preserve">
+    <value>言語を変える</value>
+  </data>
+  <data name="MetodAnaliza" xml:space="preserve">
+    <value>分析方法</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>開ける</value>
+  </data>
+  <data name="Oprogamme" xml:space="preserve">
+    <value>プログラムについて</value>
+  </data>
+  <data name="Otmena" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="Parser" xml:space="preserve">
+    <value>パーサー</value>
+  </data>
+  <data name="Povtor" xml:space="preserve">
+    <value>繰り返す</value>
+  </data>
+  <data name="Pravka" xml:space="preserve">
+    <value>編集</value>
+  </data>
+  <data name="PrimerTEXT" xml:space="preserve">
+    <value>テキスト例</value>
+  </data>
+  <data name="Pusk" xml:space="preserve">
+    <value>打ち上げ</value>
+  </data>
+  <data name="RichTextBox_Japanese" xml:space="preserve">
+    <value>こんにちは</value>
+  </data>
+  <data name="Safe" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="SafeKak" xml:space="preserve">
+    <value>名前を付けて保存</value>
+  </data>
+  <data name="SHRIFT" xml:space="preserve">
+    <value>フォントを変更する</value>
+  </data>
+  <data name="TXT" xml:space="preserve">
+    <value>文章</value>
+  </data>
+  <data name="Vernutiazik" xml:space="preserve">
+    <value>言語を返す</value>
+  </data>
+  <data name="VID" xml:space="preserve">
+    <value>ビュー</value>
+  </data>
+  <data name="Videlit" xml:space="preserve">
+    <value>ハイライト</value>
+  </data>
+  <data name="VIREZAT" xml:space="preserve">
+    <value>カット</value>
+  </data>
+  <data name="VizovCPravki" xml:space="preserve">
+    <value>助けを呼びます</value>
+  </data>
+  <data name="Zadacha" xml:space="preserve">
+    <value>タスク</value>
+  </data>
 </root>
