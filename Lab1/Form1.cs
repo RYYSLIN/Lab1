@@ -289,7 +289,7 @@ namespace Lab1
         {
             изменитьЯзыкToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Shift | Keys.L;
             вернутьЯзыкToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Shift | Keys.R;
-            пускToolStripMenuItem.ShortcutKeys= Keys.Control | Keys.Shift | Keys.J;
+            пускToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Shift | Keys.J;
             вызовСправкиToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Shift | Keys.P;
         }
 
@@ -312,9 +312,10 @@ namespace Lab1
 
         }
         // тут начинается сканер ------------------------------------------------------------------------------------------
-        private void пускToolStripMenuItem_Click(object sender, EventArgs e)
+        public void пускToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Scan();
+            Pol();
         }
 
         private void RewriteText()
@@ -334,7 +335,7 @@ namespace Lab1
             RewriteText();
         }
 
-        private void Scan()
+        public void Scan()
         {
             string text = richTextBox1.Text;
             List<Token> tokens = LexicalAnalysis(text);
@@ -370,12 +371,12 @@ namespace Lab1
                     ClearAndDisplayCorrectedText(tokens);
                 }
             }
-            
+
         }
 
         private bool HasAllTokenTypes(List<Token> tokens)
         {
-            
+
             foreach (TokenType tokenType in Enum.GetValues(typeof(TokenType)))
             {
                 if (!tokens.Exists(t => t.Type == tokenType))
@@ -390,7 +391,7 @@ namespace Lab1
         {
             if (tokens.Exists(t => t.Type == TokenType.идетификатор))
             {
-                return  false;
+                return false;
             }
 
             bool identifierAdded = false;
@@ -419,7 +420,7 @@ namespace Lab1
             richTextBox1.Clear();
             foreach (var token in tokens)
             {
-                
+
                 if (token.Value != "missing_identifier")
                 {
                     richTextBox1.AppendText(token.Value + "");
@@ -458,12 +459,12 @@ namespace Lab1
 
         private void CorrectToken(Token token)
         {
-            
+
             token.Value = "z_" + token.Value;
         }
-        private List<Token> LexicalAnalysis(string text)
+        public List<Token> LexicalAnalysis(string text)
         {
-            List<Token> tokens = new List<Token>();    
+            List<Token> tokens = new List<Token>();
             int position = 0;
 
             while (position < text.Length)
@@ -488,7 +489,7 @@ namespace Lab1
                 }
                 else if (char.IsLetter(currentChar))
                 {
-                    
+
                     // Идентификатор
                     int identifierStart = position;
                     while (position < text.Length && (char.IsLetterOrDigit(text[position]) || text[position] == '_'))
@@ -496,7 +497,7 @@ namespace Lab1
                         position++;
                     }
                     string identifier = text.Substring(identifierStart, position - identifierStart);
-                    
+
                     tokens.Add(new Token((int)TokenType.идетификатор, TokenType.идетификатор, identifier, identifierStart, position - 1, position + identifierStart));
                 }
                 else if (currentChar == '=')
@@ -516,10 +517,10 @@ namespace Lab1
                 }
                 else if (char.IsDigit(currentChar) || currentChar == '.')
                 {
-                   
+
                     bool digitProcessed = false;
 
-                  
+
                     int numberStart = position;
                     string number = "";
 
@@ -533,14 +534,14 @@ namespace Lab1
                             {
                                 position++;
                             }
-                           
+
                             if (digitProcessed)
                             {
                                 tokens.Add(new Token((int)TokenType.Целое_без_знака2, TokenType.Целое_без_знака2, number, numberStart, position - 1, position - numberStart));
                             }
                             else
                             {
-                              
+
                                 number = text.Substring(numberStart, position - numberStart);
                                 tokens.Add(new Token((int)TokenType.Целое_без_знака, TokenType.Целое_без_знака, number, numberStart, position - 1, position - numberStart));
                             }
@@ -553,10 +554,10 @@ namespace Lab1
                         digitProcessed = true;
                     }
 
-                   
+
                     digitProcessed = false;
 
-                   
+
                     if (!digitProcessed)
                     {
                         number = text.Substring(numberStart, position - numberStart);
@@ -596,14 +597,14 @@ namespace Lab1
                     int numberStart = position;
                     Error = text.Substring(position);
 
-                    tokens.Add(new Token((int)TokenType.ERROR, TokenType.ERROR, currentChar1, numberStart, position,1));
+                    tokens.Add(new Token((int)TokenType.ERROR, TokenType.ERROR, currentChar1, numberStart, position, 1));
                     position++;
                 }
             }
             return tokens;
         }
 
-        private enum TokenType
+        public enum TokenType
         {
             структура = 1,                            // Сomplex
             пробел = 4,                               // пробел
@@ -622,7 +623,7 @@ namespace Lab1
             Умножить = 16,    // Оператор умножения
             Разделить = 17   // Оператор деления
         }
-        class Token
+        public class Token
         {
             public int Cod { get; set; }
             public TokenType Type { get; set; }   // Тип
@@ -664,15 +665,15 @@ namespace Lab1
             public int EndPosition { get; set; }   // Конечная позиция токена
             public string Info { get; set; }
         }
-        private List<Token> tokens; 
-        private int currentPosition; 
-        
-        private List<ParsedToken> ParseTokens(List<Token> tokens)
+        public List<Token> tokens;
+        private int currentPosition;
+
+        public List<ParsedToken> ParseTokens(List<Token> tokens)
         {
             List<ParsedToken> parsedTokens = new List<ParsedToken>();
             int lineNumber = 1;
             int Scale = 1;
-            bool exstuct=true;
+            bool exstuct = true;
             bool expectingIdentifier = false;
             bool expectingOperator = false;
             bool expectingOpenBracket = false;
@@ -682,11 +683,11 @@ namespace Lab1
             bool expectingCloseBracket = false;
             bool sihn = false;   // =
             bool skipSpace = false;
-            bool stuct=false;
+            bool stuct = false;
             bool Plus = false;
             bool Minus = false;
-            bool Space2 = false; 
-            int d=0;
+            bool Space2 = false;
+            int d = 0;
             foreach (var token in tokens)
             {
                 if (token.Type == TokenType.пробел)
@@ -717,7 +718,7 @@ namespace Lab1
                             {
 
                             });
-                            
+
                             stuct = true;
                             exstuct = true;
                             Scale++;
@@ -732,7 +733,7 @@ namespace Lab1
                                 EndPosition = token.ColumnNext + 1,
                                 Info = token.Value
                             });
-                            
+
                             stuct = true;
                             exstuct = true;
                             Scale++;
@@ -744,13 +745,13 @@ namespace Lab1
                         {
                             parsedTokens.Add(new ParsedToken
                             {
-                               
+
                             });
-                           
+
                             stuct = true;
                             expectingIdentifier = true;
                             Scale++;
-                            
+
                         }
                         else
                         {
@@ -761,30 +762,30 @@ namespace Lab1
                                 StartPosition = token.Column + 1,
                                 EndPosition = token.ColumnNext + 1,
                                 Info = token.Value
-                            }); ; 
-                           
+                            }); ;
+
                             stuct = true;
                             expectingIdentifier = true;
                         }
                         break;
 
                     case TokenType.идетификатор:
-                            
+
                         if (expectingIdentifier)
                         {
                             parsedTokens.Add(new ParsedToken
                             {
-                               
+
                             });
                             expectingIdentifier = false;
                             expectingOperator = false;
                             sihn = true;
                             Scale++;
-                            
+
                         }
                         else
                         {
-                            
+
                             parsedTokens.Add(new ParsedToken
                             {
                                 Number = lineNumber,
@@ -792,12 +793,12 @@ namespace Lab1
                                 EndPosition = token.ColumnNext + 1,
                                 Info = token.Value
                             });
-                            
+
                             expectingOperator = false;
                             sihn = true;
                         }
                         break;
-                       
+
                     case TokenType.оператор_присваивания:
                         if (sihn)
                         {
@@ -808,7 +809,7 @@ namespace Lab1
 
 
                             });
-                            
+
                             Scale++;
                             sihn = false;
                             expectingIdentifier = false;
@@ -824,7 +825,7 @@ namespace Lab1
                                 Info = token.Value
                             });
                             currentPosition += token.Value.Length;
-                           
+
                             expectingIdentifier = false;
                             expectingOpenBracket = true;
                         }
@@ -839,10 +840,10 @@ namespace Lab1
 
 
                             });
-                           
+
                             Scale++;
                             expectingOpenBracket = false;
-                            expectingNumber = true;   
+                            expectingNumber = true;
                             sihn = false;
                             Minus = true;
                             Plus = true;
@@ -858,7 +859,7 @@ namespace Lab1
                                 Info = token.Value
 
                             });
-                           
+
                             expectingNumber = true;
                             sihn = false;
                             Minus = true;
@@ -875,7 +876,7 @@ namespace Lab1
 
 
                                 });
-                                
+
                                 Scale++;
                                 Minus = false;
                                 expectingNumber = true;
@@ -891,7 +892,7 @@ namespace Lab1
                                     EndPosition = token.ColumnNext + 1,
                                     Info = token.Value
                                 });
-                               
+
                                 expectingNumber = true;
                                 expectingNumber2 = true;
                             }
@@ -908,7 +909,7 @@ namespace Lab1
 
 
                                 });
-                               
+
                                 Scale++;
                                 Plus = false;
                                 expectingNumber = true;
@@ -924,7 +925,7 @@ namespace Lab1
                                     EndPosition = token.ColumnNext + 1,
                                     Info = token.Value
                                 });
-                                
+
                                 expectingNumber = true;
                                 expectingNumber2 = true;
                             }
@@ -933,14 +934,14 @@ namespace Lab1
                     case TokenType.Целое_без_знака:
                         if (expectingNumber)
                         {
-                            
+
                             parsedTokens.Add(new ParsedToken
                             {
 
 
 
                             });
-                           
+
                             Scale++;
                             expectingNumber = false;
                             expectingOpenBracket = false;
@@ -948,16 +949,16 @@ namespace Lab1
                         }
                         else
                         {
-                            
+
                             parsedTokens.Add(new ParsedToken
                             {
                                 Number = lineNumber++,
-                                StartPosition = token.Column+1, 
-                                EndPosition = token.ColumnNext + 1,   
+                                StartPosition = token.Column + 1,
+                                EndPosition = token.ColumnNext + 1,
                                 Info = token.Value
 
                             });
-                          
+
                             expectingOpenBracket = false;
                             expectingComma = true;
                         }
@@ -965,13 +966,13 @@ namespace Lab1
                     case TokenType.символ_разделения_параметров:
                         if (expectingComma)
                         {
-                           
+
                             parsedTokens.Add(new ParsedToken
                             {
 
 
                             });
-                         
+
                             Scale++;
                             expectingComma = false;
                             expectingNumber = false;
@@ -981,16 +982,16 @@ namespace Lab1
                         }
                         else
                         {
-                           
+
                             parsedTokens.Add(new ParsedToken
                             {
                                 Number = lineNumber++,
-                                StartPosition = token.Column + 1,  
-                                EndPosition = token.ColumnNext + 1,   
+                                StartPosition = token.Column + 1,
+                                EndPosition = token.ColumnNext + 1,
                                 Info = token.Value
 
                             });
-                           
+
                             expectingNumber = false;
                             expectingNumber2 = true;
                             Minus = true;
@@ -1006,53 +1007,53 @@ namespace Lab1
                             {
 
                             });
-                          
+
                             Scale++;
                             expectingNumber2 = false;
                             expectingComma = false;
                             expectingCloseBracket = true;
-                           
+
                         }
                         else
                         {
-                            
+
                             parsedTokens.Add(new ParsedToken
                             {
                                 Number = lineNumber++,
-                                StartPosition = token.Column + 1,  
-                                EndPosition = token.ColumnNext + 1, 
+                                StartPosition = token.Column + 1,
+                                EndPosition = token.ColumnNext + 1,
                                 Info = token.Value
                             });
-                            
+
                             expectingComma = false;
                             expectingCloseBracket = true;
                         }
                         break;
                     case TokenType.Закрывающая_скобка:
-                        
-                 if (expectingCloseBracket)
+
+                        if (expectingCloseBracket)
                         {
                             parsedTokens.Add(new ParsedToken
                             {
-                                
-                                
-                                
+
+
+
                             });
-                           
+
                             Scale++;
                             expectingNumber2 = false;
                             expectingCloseBracket = false;
                             exstuct = false;
-                            
+
                         }
                         else
                         {
-                          
+
                             parsedTokens.Add(new ParsedToken
                             {
                                 Number = lineNumber++,
-                                StartPosition = token.Column+1,  
-                                EndPosition = token.ColumnNext +1,  
+                                StartPosition = token.Column + 1,
+                                EndPosition = token.ColumnNext + 1,
                                 Info = token.Value
                             });
                             exstuct = true;
@@ -1060,7 +1061,7 @@ namespace Lab1
                             expectingCloseBracket = false;
                         }
                         break;
-                        default:
+                    default:
                         if (Scale <= 10 || Scale == 11 || Scale == 12)
                         {
                             parsedTokens.Add(new ParsedToken
@@ -1076,11 +1077,11 @@ namespace Lab1
                         else break;
                 }
             }
-            
+
             return parsedTokens;
         }
 
-        private void DisplayParsedTokens(List<Token> tokens)
+        public void DisplayParsedTokens(List<Token> tokens)
         {
             List<ParsedToken> parsedTokens = ParseTokens(tokens);
 
@@ -1090,8 +1091,8 @@ namespace Lab1
             dataGridView2.Columns.Add("Number", "№");
             dataGridView2.Columns.Add("Location", "Местоположение");
             dataGridView2.Columns.Add("Info", "Неверный фрагмент");
-             
-         
+
+
             dataGridView2.Columns["Number"].ValueType = typeof(int);
             dataGridView2.Columns["Location"].ValueType = typeof(string);
             dataGridView2.Columns["Info"].ValueType = typeof(string);
@@ -1104,12 +1105,12 @@ namespace Lab1
                 string location;
                 if (!string.IsNullOrEmpty(token.Info))
                 {
-                    
+
                     location = $"Находится от {token.StartPosition} символа до {token.EndPosition} символа";
                     dataGridView2.Rows.Add(number, location, token.Info);
                     number++;
-                        classCount++; 
-                   
+                    classCount++;
+
                 }
             }
 
@@ -1154,11 +1155,63 @@ namespace Lab1
         }
 
 
+        private void UpdateUI1()
+        {
 
+       
+            файлToolStripMenuItem.Text =Resource1.File;
+            вставитьToolStripMenuItem.Text = Resource1.CNTRLV;
+            методАнализаToolStripMenuItem.Text = Resource1.MetodAnaliza;
+            классификацияГрамматикиToolStripMenuItem.Text =Resource1.KlassiGRAMMATIC;
+            копироватьToolStripMenuItem.Text =Resource1.CNTRLC;
+            правкаToolStripMenuItem.Text = Resource1.Pravka;
+            текстToolStripMenuItem.Text = Resource1.TXT;
+            пускToolStripMenuItem.Text = Resource1.Pusk;
+            справкаToolStripMenuItem.Text = Resource1.Cpravka;
+            оПрограммеToolStripMenuItem.Text= Resource1.Oprogamme;
+            видToolStripMenuItem.Text = Resource1.VID;
+            изменитьШрифтToolStripMenuItem.Text = Resource1.SHRIFT;
+            изменитьЯзыкToolStripMenuItem.Text =Resource1.Langvich;
+            создатьToolStripMenuItem.Text = Resource1.Cozdat;
+            открытьToolStripMenuItem.Text = Resource1.Open;
+            сохранитьToolStripMenuItem.Text =Resource1.Safe;
+            сохранитьКакToolStripMenuItem.Text = Resource1.SafeKak;
+            выходToolStripMenuItem.Text = Resource1.EXIT;
+            отменитьToolStripMenuItem.Text = Resource1.Otmena;
+            повторитьToolStripMenuItem.Text = Resource1.Povtor;
+            выделитьВсеToolStripMenuItem.Text = Resource1.Videlit;
+            удалитьToolStripMenuItem.Text = Resource1.Delet;
+            постановкаЗадачиToolStripMenuItem.Text = Resource1.Zadacha;
+            грамматикаToolStripMenuItem.Text = Resource1.Grammatiic;
+            диагностикаToolStripMenuItem.Text = Resource1.Diagnostika;
+            списокЛитературыToolStripMenuItem.Text = Resource1.CpicokLIter;
+            текстовыйToolStripMenuItem.Text = Resource1.PrimerTEXT;
+            исходныйКодПрограммыToolStripMenuItem.Text = Resource1.KODISVOD;
+            tabPage1.Text = Resource1.Ckaner;
+            tabPage2.Text =Resource1.Parser;
+            tabPage3.Text = Resource1.Vivod;
+            вырезатьToolStripMenuItem.Text = Resource1.VIREZAT;
+            вернутьЯзыкToolStripMenuItem.Text = Resource1.Vernutiazik;
+            вызовСправкиToolStripMenuItem.Text = Resource1.VizovCPravki;
+           
+            ComponentResourceManager resources = new ComponentResourceManager(this.GetType());
+            resources.ApplyResources(this, "$this");
+            foreach (Control control in this.Controls)
+            {
+                resources.ApplyResources(control, control.Name);
+                if (control is ToolStrip)
+                {
+                    foreach (ToolStripItem item in ((ToolStrip)control).Items)
+                    {
+                        resources.ApplyResources(item, item.Name);
+                    }
+                }
+            }
+        }
         private void UpdateUI()
         {
-            
-            
+
+
             файлToolStripMenuItem.Text = Properties.Resources.File;
             вставитьToolStripMenuItem.Text = Properties.Resources.CNTRLV;
             методАнализаToolStripMenuItem.Text = Properties.Resources.MetodAnaliza;
@@ -1189,28 +1242,41 @@ namespace Lab1
             исходныйКодПрограммыToolStripMenuItem.Text = Properties.Resources.KODISVOD;
             tabPage1.Text = Properties.Resources.Ckaner;
             tabPage2.Text = Properties.Resources.Parser;
+            tabPage3.Text = Properties.Resources.Vivod;
             вырезатьToolStripMenuItem.Text = Properties.Resources.VIREZAT;
             вернутьЯзыкToolStripMenuItem.Text = Properties.Resources.Vernutiazik;
             вызовСправкиToolStripMenuItem.Text = Properties.Resources.VizovCPravki;
+            ComponentResourceManager resources = new ComponentResourceManager(this.GetType());
+            resources.ApplyResources(this, "$this");
+            foreach (Control control in this.Controls)
+            {
+                resources.ApplyResources(control, control.Name);
+                if (control is ToolStrip)
+                {
+                    foreach (ToolStripItem item in ((ToolStrip)control).Items)
+                    {
+                        resources.ApplyResources(item, item.Name);
+                    }
+                }
+            }
         }
         private void вернутьЯзыкToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
             if (!string.IsNullOrEmpty(previousLanguage))
             {
                 // Устанавливаем предыдущий язык
                 Thread.CurrentThread.CurrentUICulture = new CultureInfo(previousLanguage);
 
-               
-                UpdateUI();
+                // Обновляем тексты элементов управления
+                UpdateUI1();
             }
             else
             {
-                
+                // Если предыдущий язык не сохранен, устанавливаем язык по умолчанию
                 Thread.CurrentThread.CurrentUICulture = CultureInfo.DefaultThreadCurrentUICulture;
 
-                
-                UpdateUI();
+                // Обновляем тексты элементов управления
+                UpdateUI1();
             }
         }
 
@@ -1220,7 +1286,7 @@ namespace Lab1
         }
         private void Task()
         {
-      
+
             HtmlHelper.OpenInBrowser("Properties\\Task.html\"");
         }
 
@@ -1240,12 +1306,12 @@ namespace Lab1
         }
         private void KlassicGramm()
         {
-            
+
             HtmlHelper.OpenInBrowser("Properties\\ClassifGRAMM.html\"");
         }
 
         private void методАнализаToolStripMenuItem_Click(object sender, EventArgs e)
-        {       
+        {
             HtmlHelper.OpenInBrowser("Properties\\MetodAnaliz.html\"");
         }
 
@@ -1255,7 +1321,7 @@ namespace Lab1
         }
         private void Diagnostika()
         {
-  
+
             HtmlHelper.OpenInBrowser("Properties\\Netralization.html\"");
         }
 
@@ -1265,7 +1331,7 @@ namespace Lab1
         }
         private void TPROMER()
         {
-           
+
             HtmlHelper.OpenInBrowser("Properties\\TEST.html\"");
         }
 
@@ -1275,7 +1341,7 @@ namespace Lab1
         }
         private void LITER()
         {
-            
+
             HtmlHelper.OpenInBrowser("Properties\\LITER.html");
         }
 
@@ -1287,5 +1353,166 @@ namespace Lab1
         {
             HtmlHelper.OpenInBrowser("Properties\\KOD.html");
         }
+        private void Pol()
+        {
+            string inputExpression = richTextBox1.Text;
+
+            if (string.IsNullOrEmpty(inputExpression))
+            {
+                MessageBox.Show("Выражение пусто!");
+                return;
+            }
+
+            // Получаем токены из лексического анализатора
+            List<Token> tokens = LexicalAnalysis(inputExpression);
+
+            // Преобразуем выражение в ПОЛИЗ
+            List<string> poliz = ConvertToPoliz(tokens);
+
+            // Выводим полученный ПОЛИЗ в richTextBox2
+            richTextBox2.Text = string.Join(" ", poliz);
+        }
+
+        List<string> ConvertToPoliz(List<Token> tokens)
+        {
+            List<string> poliz = new List<string>();
+            Stack<Token> stack = new Stack<Token>();
+
+            foreach (Token token in tokens)
+            {
+                switch (token.Type)
+                {
+                    case TokenType.Целое_без_знака:
+                        poliz.Add(token.Value);
+                        break;
+                    case TokenType.Плюс:
+                    case TokenType.Минус:
+                    case TokenType.Умножить:
+                    case TokenType.Разделить:
+                        while (stack.Any() && GetPriority(stack.Peek().Type) >= GetPriority(token.Type))
+                        {
+                            poliz.Add(stack.Pop().Value);
+                        }
+                        stack.Push(token);
+                        break;
+                    case TokenType.открывающая_скобка:
+                        stack.Push(token);
+                        break;
+                    case TokenType.Закрывающая_скобка:
+                        while (stack.Peek().Type != TokenType.открывающая_скобка)
+                        {
+                            poliz.Add(stack.Pop().Value);
+                        }
+                        stack.Pop(); // Удаляем открывающую скобку
+                        break;
+                }
+            }
+
+            while (stack.Any())
+            {
+                poliz.Add(stack.Pop().Value);
+            }
+
+            return poliz;
+        }
+
+        private static int GetPriority(TokenType type)
+        {
+            switch (type)
+            {
+                case TokenType.Плюс:
+                case TokenType.Минус:
+                    return 1;
+                case TokenType.Умножить:
+                case TokenType.Разделить:
+                    return 2;
+                default:
+                    return 0;
+            }
+        }
+
+        class Parser
+        {
+            private readonly List<Token> tokens;
+            private int currentPosition;
+
+            public Parser(List<Token> tokens)
+            {
+                this.tokens = tokens;
+                currentPosition = 0;
+            }
+
+            public void Parse()
+            {
+                E();
+                if (currentPosition != tokens.Count)
+                {
+                    throw new Exception("Unexpected token at the end of expression");
+                }
+            }
+
+            private void E()
+            {
+                T();
+                A();
+            }
+
+            private void A()
+            {
+                if (currentPosition < tokens.Count && (tokens[currentPosition].Type == TokenType.Плюс || tokens[currentPosition].Type == TokenType.Минус))
+                {
+                    Match(tokens[currentPosition].Type);
+                    T();
+                    A();
+                }
+            }
+
+            private void T()
+            {
+                O();
+                B();
+            }
+
+            private void B()
+            {
+                if (currentPosition < tokens.Count && (tokens[currentPosition].Type == TokenType.Умножить || tokens[currentPosition].Type == TokenType.Разделить))
+                {
+                    Match(tokens[currentPosition].Type);
+                    O();
+                    B();
+                }
+            }
+
+            private void O()
+            {
+                if (currentPosition < tokens.Count)
+                {
+                    if (tokens[currentPosition].Type == TokenType.Целое_без_знака || tokens[currentPosition].Type == TokenType.открывающая_скобка)
+                    {
+                        Match(tokens[currentPosition].Type);
+                    }
+                    else
+                    {
+                        throw new Exception("Unexpected token in expression");
+                    }
+                }
+                else
+                {
+                    throw new Exception("Unexpected end of expression");
+                }
+            }
+
+            private void Match(TokenType expectedToken)
+            {
+                if (currentPosition < tokens.Count && tokens[currentPosition].Type == expectedToken)
+                {
+                    currentPosition++;
+                }
+                else
+                {
+                    throw new Exception($"Unexpected token: {tokens[currentPosition].Value}");
+                }
+            }
+        }
     }
-}
+ }

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Lab1.Properties {
+namespace Lab1 {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace Lab1.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    internal class Resource1 {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources() {
+        internal Resource1() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Lab1.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Lab1.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Lab1.Resource1", typeof(Resource1).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,7 +61,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на スキャナー.
+        ///   Ищет локализованную строку, похожую на Сканер.
         /// </summary>
         internal static string Ckaner {
             get {
@@ -70,7 +70,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на コピー.
+        ///   Ищет локализованную строку, похожую на Копировать.
         /// </summary>
         internal static string CNTRLC {
             get {
@@ -79,7 +79,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на ありがとう.
+        ///   Ищет локализованную строку, похожую на Вставить.
         /// </summary>
         internal static string CNTRLV {
             get {
@@ -88,16 +88,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на こんに.
-        /// </summary>
-        internal static string ColumnHeader1_Japanese {
-            get {
-                return ResourceManager.GetString("ColumnHeader1_Japanese", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Ищет локализованную строку, похожую на 作成する.
+        ///   Ищет локализованную строку, похожую на Создать.
         /// </summary>
         internal static string Cozdat {
             get {
@@ -106,7 +97,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на 参考文献.
+        ///   Ищет локализованную строку, похожую на Список литературы.
         /// </summary>
         internal static string CpicokLIter {
             get {
@@ -115,7 +106,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на 参照.
+        ///   Ищет локализованную строку, похожую на Справка.
         /// </summary>
         internal static string Cpravka {
             get {
@@ -124,7 +115,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на 消去.
+        ///   Ищет локализованную строку, похожую на Удалить.
         /// </summary>
         internal static string Delet {
             get {
@@ -133,7 +124,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на 診断とエラーの無力化.
+        ///   Ищет локализованную строку, похожую на Диагностика.
         /// </summary>
         internal static string Diagnostika {
             get {
@@ -142,7 +133,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на 出口.
+        ///   Ищет локализованную строку, похожую на Выход.
         /// </summary>
         internal static string EXIT {
             get {
@@ -151,7 +142,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на ふじ.
+        ///   Ищет локализованную строку, похожую на Файл.
         /// </summary>
         internal static string File {
             get {
@@ -160,7 +151,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на 文法.
+        ///   Ищет локализованную строку, похожую на Грамматика.
         /// </summary>
         internal static string Grammatiic {
             get {
@@ -169,7 +160,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на 文法の分類.
+        ///   Ищет локализованную строку, похожую на Классификация грамматики.
         /// </summary>
         internal static string KlassiGRAMMATIC {
             get {
@@ -178,7 +169,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на ソース.
+        ///   Ищет локализованную строку, похожую на Исходный код.
         /// </summary>
         internal static string KODISVOD {
             get {
@@ -187,7 +178,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на 言語を変える.
+        ///   Ищет локализованную строку, похожую на Язык.
         /// </summary>
         internal static string Langvich {
             get {
@@ -196,7 +187,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на 分析方法.
+        ///   Ищет локализованную строку, похожую на Метод анализа.
         /// </summary>
         internal static string MetodAnaliza {
             get {
@@ -205,7 +196,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на 開ける.
+        ///   Ищет локализованную строку, похожую на Открыть.
         /// </summary>
         internal static string Open {
             get {
@@ -214,7 +205,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на プログラムについて.
+        ///   Ищет локализованную строку, похожую на О программе.
         /// </summary>
         internal static string Oprogamme {
             get {
@@ -223,7 +214,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на キャンセル.
+        ///   Ищет локализованную строку, похожую на Отмена.
         /// </summary>
         internal static string Otmena {
             get {
@@ -232,7 +223,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на パーサー.
+        ///   Ищет локализованную строку, похожую на Парсер.
         /// </summary>
         internal static string Parser {
             get {
@@ -241,7 +232,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на 繰り返す.
+        ///   Ищет локализованную строку, похожую на Повтор.
         /// </summary>
         internal static string Povtor {
             get {
@@ -250,7 +241,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на 編集.
+        ///   Ищет локализованную строку, похожую на Правка.
         /// </summary>
         internal static string Pravka {
             get {
@@ -259,7 +250,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на テキスト例.
+        ///   Ищет локализованную строку, похожую на Пример текстовый.
         /// </summary>
         internal static string PrimerTEXT {
             get {
@@ -268,7 +259,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на 打ち上げ.
+        ///   Ищет локализованную строку, похожую на Пуск.
         /// </summary>
         internal static string Pusk {
             get {
@@ -277,16 +268,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на こんにちは.
-        /// </summary>
-        internal static string RichTextBox_Japanese {
-            get {
-                return ResourceManager.GetString("RichTextBox_Japanese", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Ищет локализованную строку, похожую на 保存.
+        ///   Ищет локализованную строку, похожую на Сохранить.
         /// </summary>
         internal static string Safe {
             get {
@@ -295,7 +277,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на 名前を付けて保存.
+        ///   Ищет локализованную строку, похожую на Сохранить как.
         /// </summary>
         internal static string SafeKak {
             get {
@@ -304,7 +286,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на フォントを変更する.
+        ///   Ищет локализованную строку, похожую на Шрифт.
         /// </summary>
         internal static string SHRIFT {
             get {
@@ -313,7 +295,25 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на 文章.
+        ///   Ищет локализованную строку, похожую на .
+        /// </summary>
+        internal static string String1 {
+            get {
+                return ResourceManager.GetString("String1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на .
+        /// </summary>
+        internal static string String2 {
+            get {
+                return ResourceManager.GetString("String2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Текст.
         /// </summary>
         internal static string TXT {
             get {
@@ -322,7 +322,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на 言語を返す.
+        ///   Ищет локализованную строку, похожую на Вернуть язык.
         /// </summary>
         internal static string Vernutiazik {
             get {
@@ -331,7 +331,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на ビュー.
+        ///   Ищет локализованную строку, похожую на Вид.
         /// </summary>
         internal static string VID {
             get {
@@ -340,7 +340,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на ハイライト.
+        ///   Ищет локализованную строку, похожую на Выделить.
         /// </summary>
         internal static string Videlit {
             get {
@@ -349,7 +349,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на カット.
+        ///   Ищет локализованную строку, похожую на Вырезать.
         /// </summary>
         internal static string VIREZAT {
             get {
@@ -358,7 +358,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на ナライー.
+        ///   Ищет локализованную строку, похожую на Вывод.
         /// </summary>
         internal static string Vivod {
             get {
@@ -367,7 +367,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на 助けを呼びます.
+        ///   Ищет локализованную строку, похожую на Вызов справки.
         /// </summary>
         internal static string VizovCPravki {
             get {
@@ -376,7 +376,7 @@ namespace Lab1.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на タスク.
+        ///   Ищет локализованную строку, похожую на Задача.
         /// </summary>
         internal static string Zadacha {
             get {

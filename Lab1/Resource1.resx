@@ -118,111 +118,111 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Ckaner" xml:space="preserve">
-    <value>スキャナー</value>
+    <value>Сканер</value>
   </data>
   <data name="CNTRLC" xml:space="preserve">
-    <value>コピー</value>
+    <value>Копировать</value>
   </data>
   <data name="CNTRLV" xml:space="preserve">
-    <value>ありがとう</value>
-  </data>
-  <data name="ColumnHeader1_Japanese" xml:space="preserve">
-    <value>こんに</value>
+    <value>Вставить</value>
   </data>
   <data name="Cozdat" xml:space="preserve">
-    <value>作成する</value>
+    <value>Создать</value>
   </data>
   <data name="CpicokLIter" xml:space="preserve">
-    <value>参考文献</value>
+    <value>Список литературы</value>
   </data>
   <data name="Cpravka" xml:space="preserve">
-    <value>参照</value>
+    <value>Справка</value>
   </data>
   <data name="Delet" xml:space="preserve">
-    <value>消去</value>
+    <value>Удалить</value>
   </data>
   <data name="Diagnostika" xml:space="preserve">
-    <value>診断とエラーの無力化</value>
+    <value>Диагностика</value>
   </data>
   <data name="EXIT" xml:space="preserve">
-    <value>出口</value>
+    <value>Выход</value>
   </data>
   <data name="File" xml:space="preserve">
-    <value>ふじ</value>
+    <value>Файл</value>
   </data>
   <data name="Grammatiic" xml:space="preserve">
-    <value>文法</value>
+    <value>Грамматика</value>
   </data>
   <data name="KlassiGRAMMATIC" xml:space="preserve">
-    <value>文法の分類</value>
+    <value>Классификация грамматики</value>
   </data>
   <data name="KODISVOD" xml:space="preserve">
-    <value>ソース</value>
+    <value>Исходный код</value>
   </data>
   <data name="Langvich" xml:space="preserve">
-    <value>言語を変える</value>
+    <value>Язык</value>
   </data>
   <data name="MetodAnaliza" xml:space="preserve">
-    <value>分析方法</value>
+    <value>Метод анализа</value>
   </data>
   <data name="Open" xml:space="preserve">
-    <value>開ける</value>
+    <value>Открыть</value>
   </data>
   <data name="Oprogamme" xml:space="preserve">
-    <value>プログラムについて</value>
+    <value>О программе</value>
   </data>
   <data name="Otmena" xml:space="preserve">
-    <value>キャンセル</value>
+    <value>Отмена</value>
   </data>
   <data name="Parser" xml:space="preserve">
-    <value>パーサー</value>
+    <value>Парсер</value>
   </data>
   <data name="Povtor" xml:space="preserve">
-    <value>繰り返す</value>
+    <value>Повтор</value>
   </data>
   <data name="Pravka" xml:space="preserve">
-    <value>編集</value>
+    <value>Правка</value>
   </data>
   <data name="PrimerTEXT" xml:space="preserve">
-    <value>テキスト例</value>
+    <value>Пример текстовый</value>
   </data>
   <data name="Pusk" xml:space="preserve">
-    <value>打ち上げ</value>
-  </data>
-  <data name="RichTextBox_Japanese" xml:space="preserve">
-    <value>こんにちは</value>
+    <value>Пуск</value>
   </data>
   <data name="Safe" xml:space="preserve">
-    <value>保存</value>
+    <value>Сохранить</value>
   </data>
   <data name="SafeKak" xml:space="preserve">
-    <value>名前を付けて保存</value>
+    <value>Сохранить как</value>
   </data>
   <data name="SHRIFT" xml:space="preserve">
-    <value>フォントを変更する</value>
+    <value>Шрифт</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="String2" xml:space="preserve">
+    <value />
   </data>
   <data name="TXT" xml:space="preserve">
-    <value>文章</value>
+    <value>Текст</value>
   </data>
   <data name="Vernutiazik" xml:space="preserve">
-    <value>言語を返す</value>
+    <value>Вернуть язык</value>
   </data>
   <data name="VID" xml:space="preserve">
-    <value>ビュー</value>
+    <value>Вид</value>
   </data>
   <data name="Videlit" xml:space="preserve">
-    <value>ハイライト</value>
+    <value>Выделить</value>
   </data>
   <data name="VIREZAT" xml:space="preserve">
-    <value>カット</value>
+    <value>Вырезать</value>
   </data>
   <data name="Vivod" xml:space="preserve">
-    <value>ナライー</value>
+    <value>Вывод</value>
   </data>
   <data name="VizovCPravki" xml:space="preserve">
-    <value>助けを呼びます</value>
+    <value>Вызов справки</value>
   </data>
   <data name="Zadacha" xml:space="preserve">
-    <value>タスク</value>
+    <value>Задача</value>
   </data>
 </root>
