@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -15,6 +16,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static Lab1.Form1;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolBar;
@@ -23,17 +25,18 @@ namespace Lab1
 {
     public partial class Form1 : Form
     {
+
         public Form1()
         {
-
             this.FormClosing += Form1_FormClosing;
             StartPosition = FormStartPosition.Manual;
             InitializeComponent();
             FormBorderStyle = FormBorderStyle.Sizable;
             SizeGripStyle = SizeGripStyle.Show;
-            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-        }
 
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        }
         private void toolStripButton5_Click(object sender, EventArgs e)
         {
             RedoFile();
@@ -318,31 +321,10 @@ namespace Lab1
             Pol();
         }
 
-        private void RewriteText()
-        {
-            string originalText = richTextBox1.Text;
-
-            string pattern = @"\b\w+\b";
-
-            string rewrittenText = Regex.Replace(originalText, pattern, " $&");
-
-            richTextBox1.Clear();
-            richTextBox1.AppendText(rewrittenText.Trim());
-        }
-
-        private void buttonRewrite_Click(object sender, EventArgs e)
-        {
-            RewriteText();
-        }
-
         public void Scan()
         {
             string text = richTextBox1.Text;
             List<Token> tokens = LexicalAnalysis(text);
-
-            bool identifierAdded = AddMissingIdentifiers(tokens);
-
-            bool hasAllTypes = HasAllTokenTypes(tokens);
 
             dataGridView1.DataSource = null;
             dataGridView1.Rows.Clear();
@@ -358,74 +340,10 @@ namespace Lab1
             {
                 dataTable.Rows.Add(token.Cod, token.Type.ToString(), token.Value, token.Column + 1, token.ColumnNext + 1);
             }
-
             dataGridView1.DataSource = dataTable;
-
-            DisplayParsedTokens(tokens);
-
-            if (identifierAdded)
-            {
-                MessageBox.Show("Ваш идентификатор не был найден.\n  Был добавлен 'A'.");
-                if (!hasAllTypes)
-                {
-                    ClearAndDisplayCorrectedText(tokens);
-                }
-            }
-
-        }
-
-        private bool HasAllTokenTypes(List<Token> tokens)
-        {
-
-            foreach (TokenType tokenType in Enum.GetValues(typeof(TokenType)))
-            {
-                if (!tokens.Exists(t => t.Type == tokenType))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        private bool AddMissingIdentifiers(List<Token> tokens)
-        {
-            if (tokens.Exists(t => t.Type == TokenType.идетификатор))
-            {
-                return false;
-            }
-
-            bool identifierAdded = false;
-
-            for (int i = 0; i < tokens.Count; i++)
-            {
-                if (tokens[i].Type == TokenType.оператор && !tokens.Exists(t => t.Type == TokenType.идетификатор))
-                {
-                    Token identifierToken = new Token(2, TokenType.идетификатор, "A", tokens[i].ColumnNext, tokens[i].ColumnNext + 1, 2);
-                    tokens.Insert(i + 1, identifierToken);
-                    identifierAdded = true;
-                }
-                else if (tokens[i].Type == TokenType.оператор_присваивания && !tokens.Exists(t => t.Type == TokenType.идетификатор))
-                {
-                    Token identifierToken = new Token(2, TokenType.идетификатор, "A", tokens[i].Column, tokens[i].Column, 2);
-                    tokens.Insert(i, identifierToken);
-                    identifierAdded = true;
-                }
-            }
-
-            return identifierAdded;
-        }
-
-        private void ClearAndDisplayCorrectedText(List<Token> tokens)
-        {
-            richTextBox1.Clear();
-            foreach (var token in tokens)
-            {
-
-                if (token.Value != "missing_identifier")
-                {
-                    richTextBox1.AppendText(token.Value + "");
-                }
-            }
+            Parser parser = new Parser();
+            List<ParsedToken> parsedTokens = parser.ParseTokens(tokens);
+            DisplayParsedTokens(parsedTokens);
         }
         public class HtmlHelper
         {
@@ -445,23 +363,7 @@ namespace Lab1
                 return Regex.IsMatch(input, pattern);
             }
         }
-        private bool IsValidIdentifier(string identifier)
-        {
-            foreach (char c in identifier)
-            {
-                if (!char.IsLetterOrDigit(c) && c != '_')
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
 
-        private void CorrectToken(Token token)
-        {
-
-            token.Value = "z_" + token.Value;
-        }
         public List<Token> LexicalAnalysis(string text)
         {
             List<Token> tokens = new List<Token>();
@@ -475,7 +377,6 @@ namespace Lab1
                 {
                     tokens.Add(new Token((int)TokenType.оператор, TokenType.оператор, "::", position, position + 1, 2));
                     position += 2;
-
                 }
                 else if (position + 7 < text.Length && text.Substring(position, 7) == "COMPLEX")
                 {
@@ -489,7 +390,6 @@ namespace Lab1
                 }
                 else if (char.IsLetter(currentChar))
                 {
-
                     // Идентификатор
                     int identifierStart = position;
                     while (position < text.Length && (char.IsLetterOrDigit(text[position]) || text[position] == '_'))
@@ -497,8 +397,7 @@ namespace Lab1
                         position++;
                     }
                     string identifier = text.Substring(identifierStart, position - identifierStart);
-
-                    tokens.Add(new Token((int)TokenType.идетификатор, TokenType.идетификатор, identifier, identifierStart, position - 1, position + identifierStart));
+                    tokens.Add(new Token((int)TokenType.идетификатор, TokenType.идетификатор, identifier, identifierStart, position - 1, position - identifierStart));
                 }
                 else if (currentChar == '=')
                 {
@@ -515,69 +414,33 @@ namespace Lab1
                     tokens.Add(new Token((int)TokenType.Закрывающая_скобка, TokenType.Закрывающая_скобка, ")", position, position, 1));
                     position++;
                 }
-                else if (char.IsDigit(currentChar) || currentChar == '.')
+                else if (char.IsDigit(currentChar) || currentChar == '-' || currentChar == '+')
                 {
-
-                    bool digitProcessed = false;
-
+                    // Флаг наличия знака перед числом
+                    bool hasSign = currentChar == '-' || currentChar == '+';
+                    char sign = ' ';
+                    if (hasSign)
+                    {
+                        sign = currentChar;
+                        position++;
+                    }
 
                     int numberStart = position;
-                    string number = "";
-
                     while (position < text.Length && (char.IsDigit(text[position]) || text[position] == '.'))
                     {
-                        if (text[position] == '.')
-                        {
-                            position++;
-                            if (!char.IsDigit(text[position])) { }
-                            while (position < text.Length && char.IsDigit(text[position]))
-                            {
-                                position++;
-                            }
-
-                            if (digitProcessed)
-                            {
-                                tokens.Add(new Token((int)TokenType.Целое_без_знака2, TokenType.Целое_без_знака2, number, numberStart, position - 1, position - numberStart));
-                            }
-                            else
-                            {
-
-                                number = text.Substring(numberStart, position - numberStart);
-                                tokens.Add(new Token((int)TokenType.Целое_без_знака, TokenType.Целое_без_знака, number, numberStart, position - 1, position - numberStart));
-                            }
-
-                            digitProcessed = true;
-                            break;
-                        }
-
                         position++;
-                        digitProcessed = true;
                     }
 
+                    // Определение типа числа
+                    int length = position - numberStart;
+                    string number = text.Substring(numberStart, length);
+                    TokenType numberType = TokenType.Целое_без_знака;
 
-                    digitProcessed = false;
-
-
-                    if (!digitProcessed)
-                    {
-                        number = text.Substring(numberStart, position - numberStart);
-                        tokens.Add(new Token((int)TokenType.Целое_без_знака, TokenType.Целое_без_знака, number, numberStart, position - 1, position - numberStart));
-                    }
+                    tokens.Add(new Token((int)numberType, numberType, number, numberStart, position - 1, length));
                 }
-
                 else if (currentChar == ',')
                 {
                     tokens.Add(new Token((int)TokenType.символ_разделения_параметров, TokenType.символ_разделения_параметров, ",", position, position, 1));
-                    position++;
-                }
-                else if (currentChar == '-')
-                {
-                    tokens.Add(new Token((int)TokenType.Минус, TokenType.Минус, "-", position, position, 1));
-                    position++;
-                }
-                else if (currentChar == '+')
-                {
-                    tokens.Add(new Token((int)TokenType.Плюс, TokenType.Плюс, "+", position, position, 1));
                     position++;
                 }
                 else if (currentChar == '*')
@@ -596,41 +459,43 @@ namespace Lab1
                     string Error;
                     int numberStart = position;
                     Error = text.Substring(position);
-
                     tokens.Add(new Token((int)TokenType.ERROR, TokenType.ERROR, currentChar1, numberStart, position, 1));
                     position++;
                 }
             }
+
             return tokens;
         }
 
         public enum TokenType
         {
-            структура = 1,                            // Сomplex
-            пробел = 4,                               // пробел
-            оператор = 3,                             // двойные двоиточие
-            идетификатор = 2,                         // идентификатор
-            оператор_присваивания = 5,                // оператор присвяивания
-            открывающая_скобка = 6,                   // открывающая скобка
-            Закрывающая_скобка = 7,                   // закрывающая скобка
-            Целое_без_знака = 11,                     // целое без знака
-            символ_разделения_параметров = 10,      // символ разделения параметров (,)
-            Минус = 8,                                // Минус
-            Плюс = 9,                                // Плюс
+            структура = 1,
+            пробел = 4,
+            оператор = 3,
+            идетификатор = 2,
+            оператор_присваивания = 5,
+            открывающая_скобка = 6,
+            Закрывающая_скобка = 7,
+            Целое_без_знака = 11,
+            символ_разделения_параметров = 10,
+            Минус = 8,
+            Плюс = 9,
             ERROR = 12,
             Целое_без_знака2 = 13,
             Подчеркивание,
-            Умножить = 16,    // Оператор умножения
-            Разделить = 17   // Оператор деления
+            Умножить = 16,
+            Разделить = 17,
+            недостающий_идентификатор
         }
+
         public class Token
         {
             public int Cod { get; set; }
-            public TokenType Type { get; set; }   // Тип
-            public string Value { get; set; }     // Аргумент
-            public int Column { get; set; }       // последователь 
+            public TokenType Type { get; set; }
+            public string Value { get; set; }
+            public int Column { get; set; }
             public int ColumnNext { get; set; }
-            public int quatity { get; set; }      // кол-во символов
+            public int quatity { get; set; }
             public Token(int cod, TokenType type, string value, int column, int columnNext, int quatity)
             {
                 Cod = cod;
@@ -641,6 +506,23 @@ namespace Lab1
                 this.quatity = quatity;
             }
         }
+
+        public class ParsedToken
+        {
+            public int Number { get; set; }
+            public int StartPosition { get; set; }
+            public int EndPosition { get; set; }
+            public string Info { get; set; }
+
+            public ParsedToken(int num, int st, int end, string info)
+            {
+                Number = num;
+                StartPosition = st;
+                EndPosition = end;
+                Info = info;
+            }
+        }
+
         private void richTextBox1_TextChanged(object sender, EventArgs e)
         {
 
@@ -658,465 +540,133 @@ namespace Lab1
 
 
 
-        public class ParsedToken
-        {
-            public int Number { get; set; }
-            public int StartPosition { get; set; } // Начальная позиция токена
-            public int EndPosition { get; set; }   // Конечная позиция токена
-            public string Info { get; set; }
-        }
-        public List<Token> tokens;
-        private int currentPosition;
 
-        public List<ParsedToken> ParseTokens(List<Token> tokens)
+        public class Parser
         {
-            List<ParsedToken> parsedTokens = new List<ParsedToken>();
-            int lineNumber = 1;
-            int Scale = 1;
-            bool exstuct = true;
-            bool expectingIdentifier = false;
-            bool expectingOperator = false;
-            bool expectingOpenBracket = false;
-            bool expectingNumber = false;
-            bool expectingNumber2 = false; //Int
-            bool expectingComma = false;
-            bool expectingCloseBracket = false;
-            bool sihn = false;   // =
-            bool skipSpace = false;
-            bool stuct = false;
-            bool Plus = false;
-            bool Minus = false;
-            bool Space2 = false;
-            int d = 0;
-            foreach (var token in tokens)
+            public List<ParsedToken> ParseTokens(List<Token> tokens)
             {
-                if (token.Type == TokenType.пробел)
+                List<ParsedToken> parsedTokens = new List<ParsedToken>();
+                int lineNumber = 1;
+                int tokenIndex = 0; // Индекс ожидаемого токена
+                List<Token> deletedTokens = new List<Token>();
+                // Список для хранения всех найденных ошибок
+                List<Token> errorTokens = new List<Token>();
+
+                TokenType[] expectedSequence = new TokenType[]
                 {
-                    if (skipSpace)
+            TokenType.структура,
+            TokenType.оператор,
+            TokenType.идетификатор,
+            TokenType.оператор_присваивания,
+            TokenType.открывающая_скобка,
+            TokenType.Целое_без_знака,
+            TokenType.символ_разделения_параметров,
+            TokenType.Целое_без_знака,
+            TokenType.Закрывающая_скобка
+                };
+
+                foreach (Token token in tokens)
+                {
+               
+                    // Проверяем, является ли текущий токен пробелом
+                    if (token.Type == TokenType.пробел)
                     {
-                        parsedTokens.Add(new ParsedToken
-                        {
-                            Number = lineNumber,
-                            StartPosition = token.Column + 1,
-                            EndPosition = token.ColumnNext + 1,
-                            Info = "Множество пробелов"
-                        });
+                        continue; // Пропускаем пробелы
                     }
-                    skipSpace = true;
-                    continue;
+                   
+                    // Если достигнут конец ожидаемой последовательности, сбрасываем индекс и начинаем заново
+                    if (tokenIndex >= expectedSequence.Length)
+                    {
+                        tokenIndex = 0;
+                        lineNumber++;
+                    }
+                    if (tokenIndex >= tokens.Count)
+                    {
+                        deletedTokens.Add(token);
+                        continue;
+                    }
+                    // Проверяем, соответствует ли текущий токен ожидаемому
+                    if (token.Type != expectedSequence[tokenIndex])
+                    {
+                        
+                        if (token.Type==TokenType.ERROR)
+                        {
+                            errorTokens.Add(token);
+                            continue;
+                        }
+                        if(token.Type == TokenType.оператор)
+                        {
+                            continue;
+                        }
+                        
+                        if (token.Type == TokenType.оператор_присваивания)
+                        {
+                            continue;
+                        }
+                        if (token.Type == TokenType.открывающая_скобка)
+                        {
+                            continue;
+                        }
+                        
+                        if (token.Type == TokenType.символ_разделения_параметров)
+                        {
+                            continue;
+                        }
+                        if (token.Type == TokenType.Закрывающая_скобка)
+                        {
+                            continue;
+                        }
+                        errorTokens.Add(token);
+                    }
+
+                    // Увеличиваем индекс, если текущий токен соответствует ожидаемому
+                    tokenIndex++;
                 }
-                else
+
+                // Преобразование всех найденных ошибок в объекты ParsedToken
+                foreach (Token errorToken in errorTokens)
                 {
-                    skipSpace = false;
+                    // Предполагается, что у токена есть свойства StartPosition и EndPosition
+                    // которые указывают на его начальную и конечную позиции в исходном тексте
+                    parsedTokens.Add(new ParsedToken(lineNumber, errorToken.Column, errorToken.ColumnNext, errorToken.Value));
                 }
-                switch (token.Type)
-                {
-                    case TokenType.структура:
-                        if (exstuct)
-                        {
-                            parsedTokens.Add(new ParsedToken
-                            {
-
-                            });
-
-                            stuct = true;
-                            exstuct = true;
-                            Scale++;
-                        }
-                        else
-                        {
-
-                            parsedTokens.Add(new ParsedToken
-                            {
-                                Number = lineNumber,
-                                StartPosition = token.Column + 1,
-                                EndPosition = token.ColumnNext + 1,
-                                Info = token.Value
-                            });
-
-                            stuct = true;
-                            exstuct = true;
-                            Scale++;
-                        }
-                        break;
-
-                    case TokenType.оператор:
-                        if (stuct)
-                        {
-                            parsedTokens.Add(new ParsedToken
-                            {
-
-                            });
-
-                            stuct = true;
-                            expectingIdentifier = true;
-                            Scale++;
-
-                        }
-                        else
-                        {
-
-                            parsedTokens.Add(new ParsedToken
-                            {
-                                Number = lineNumber,
-                                StartPosition = token.Column + 1,
-                                EndPosition = token.ColumnNext + 1,
-                                Info = token.Value
-                            }); ;
-
-                            stuct = true;
-                            expectingIdentifier = true;
-                        }
-                        break;
-
-                    case TokenType.идетификатор:
-
-                        if (expectingIdentifier)
-                        {
-                            parsedTokens.Add(new ParsedToken
-                            {
-
-                            });
-                            expectingIdentifier = false;
-                            expectingOperator = false;
-                            sihn = true;
-                            Scale++;
-
-                        }
-                        else
-                        {
-
-                            parsedTokens.Add(new ParsedToken
-                            {
-                                Number = lineNumber,
-                                StartPosition = token.Column + 1,
-                                EndPosition = token.ColumnNext + 1,
-                                Info = token.Value
-                            });
-
-                            expectingOperator = false;
-                            sihn = true;
-                        }
-                        break;
-
-                    case TokenType.оператор_присваивания:
-                        if (sihn)
-                        {
-
-                            parsedTokens.Add(new ParsedToken
-                            {
-
-
-
-                            });
-
-                            Scale++;
-                            sihn = false;
-                            expectingIdentifier = false;
-                            expectingOpenBracket = true;
-                        }
-                        else
-                        {
-                            parsedTokens.Add(new ParsedToken
-                            {
-                                Number = lineNumber++,
-                                StartPosition = token.Column + 1,
-                                EndPosition = token.ColumnNext + 1,
-                                Info = token.Value
-                            });
-                            currentPosition += token.Value.Length;
-
-                            expectingIdentifier = false;
-                            expectingOpenBracket = true;
-                        }
-                        break;
-                    case TokenType.открывающая_скобка:
-                        if (expectingOpenBracket)
-                        {
-
-                            parsedTokens.Add(new ParsedToken
-                            {
-
-
-
-                            });
-
-                            Scale++;
-                            expectingOpenBracket = false;
-                            expectingNumber = true;
-                            sihn = false;
-                            Minus = true;
-                            Plus = true;
-                        }
-                        else
-                        {
-
-                            parsedTokens.Add(new ParsedToken
-                            {
-                                Number = lineNumber++,
-                                StartPosition = token.Column + 1,
-                                EndPosition = token.ColumnNext + 1,
-                                Info = token.Value
-
-                            });
-
-                            expectingNumber = true;
-                            sihn = false;
-                            Minus = true;
-                            Plus = true;
-                        }
-                        break;
-                    case TokenType.Минус:
-                        {
-                            if (Minus)
-                            {
-                                parsedTokens.Add(new ParsedToken
-                                {
-
-
-
-                                });
-
-                                Scale++;
-                                Minus = false;
-                                expectingNumber = true;
-                                expectingNumber2 = true;
-                            }
-
-                            else
-                            {
-                                parsedTokens.Add(new ParsedToken
-                                {
-                                    Number = lineNumber++,
-                                    StartPosition = token.Column + 1,
-                                    EndPosition = token.ColumnNext + 1,
-                                    Info = token.Value
-                                });
-
-                                expectingNumber = true;
-                                expectingNumber2 = true;
-                            }
-                        }
-                        break;
-
-                    case TokenType.Плюс:
-                        {
-                            if (Plus)
-                            {
-                                parsedTokens.Add(new ParsedToken
-                                {
-
-
-
-                                });
-
-                                Scale++;
-                                Plus = false;
-                                expectingNumber = true;
-                                expectingNumber2 = true;
-                            }
-
-                            else
-                            {
-                                parsedTokens.Add(new ParsedToken
-                                {
-                                    Number = lineNumber++,
-                                    StartPosition = token.Column + 1,
-                                    EndPosition = token.ColumnNext + 1,
-                                    Info = token.Value
-                                });
-
-                                expectingNumber = true;
-                                expectingNumber2 = true;
-                            }
-                        }
-                        break;
-                    case TokenType.Целое_без_знака:
-                        if (expectingNumber)
-                        {
-
-                            parsedTokens.Add(new ParsedToken
-                            {
-
-
-
-                            });
-
-                            Scale++;
-                            expectingNumber = false;
-                            expectingOpenBracket = false;
-                            expectingComma = true;
-                        }
-                        else
-                        {
-
-                            parsedTokens.Add(new ParsedToken
-                            {
-                                Number = lineNumber++,
-                                StartPosition = token.Column + 1,
-                                EndPosition = token.ColumnNext + 1,
-                                Info = token.Value
-
-                            });
-
-                            expectingOpenBracket = false;
-                            expectingComma = true;
-                        }
-                        break;
-                    case TokenType.символ_разделения_параметров:
-                        if (expectingComma)
-                        {
-
-                            parsedTokens.Add(new ParsedToken
-                            {
-
-
-                            });
-
-                            Scale++;
-                            expectingComma = false;
-                            expectingNumber = false;
-                            expectingNumber2 = true;
-                            Minus = true;
-                            Plus = true;
-                        }
-                        else
-                        {
-
-                            parsedTokens.Add(new ParsedToken
-                            {
-                                Number = lineNumber++,
-                                StartPosition = token.Column + 1,
-                                EndPosition = token.ColumnNext + 1,
-                                Info = token.Value
-
-                            });
-
-                            expectingNumber = false;
-                            expectingNumber2 = true;
-                            Minus = true;
-                            Plus = true;
-                        }
-                        break;
-                    case TokenType.Целое_без_знака2:
-                        if (expectingNumber2)
-                        {
-                            expectingNumber = true;
-
-                            parsedTokens.Add(new ParsedToken
-                            {
-
-                            });
-
-                            Scale++;
-                            expectingNumber2 = false;
-                            expectingComma = false;
-                            expectingCloseBracket = true;
-
-                        }
-                        else
-                        {
-
-                            parsedTokens.Add(new ParsedToken
-                            {
-                                Number = lineNumber++,
-                                StartPosition = token.Column + 1,
-                                EndPosition = token.ColumnNext + 1,
-                                Info = token.Value
-                            });
-
-                            expectingComma = false;
-                            expectingCloseBracket = true;
-                        }
-                        break;
-                    case TokenType.Закрывающая_скобка:
-
-                        if (expectingCloseBracket)
-                        {
-                            parsedTokens.Add(new ParsedToken
-                            {
-
-
-
-                            });
-
-                            Scale++;
-                            expectingNumber2 = false;
-                            expectingCloseBracket = false;
-                            exstuct = false;
-
-                        }
-                        else
-                        {
-
-                            parsedTokens.Add(new ParsedToken
-                            {
-                                Number = lineNumber++,
-                                StartPosition = token.Column + 1,
-                                EndPosition = token.ColumnNext + 1,
-                                Info = token.Value
-                            });
-                            exstuct = true;
-                            expectingNumber2 = false;
-                            expectingCloseBracket = false;
-                        }
-                        break;
-                    default:
-                        if (Scale <= 10 || Scale == 11 || Scale == 12)
-                        {
-                            parsedTokens.Add(new ParsedToken
-                            {
-                                Number = lineNumber++,
-                                StartPosition = token.Column + 1,
-                                EndPosition = token.ColumnNext + 1,
-                                Info = $"Ошибка {token.Value}"
-                            });
-                            currentPosition -= token.Value.Length;
-                            break;
-                        }
-                        else break;
-                }
+                // Добавляем удаленные токены в список ошибок
+              
+                return parsedTokens;
             }
-
-            return parsedTokens;
         }
 
-        public void DisplayParsedTokens(List<Token> tokens)
+        public void DisplayParsedTokens(List<ParsedToken> parsedTokens)
         {
-            List<ParsedToken> parsedTokens = ParseTokens(tokens);
+            // Проверка на null перед обращением к dataGridView2
+            if (dataGridView2 == null)
+            {
+                // Обработка случая, когда dataGridView2 не инициализирован
+                return;
+            }
 
             dataGridView2.AutoGenerateColumns = false;
+          
+            dataGridView2.Rows.Clear();
             dataGridView2.Columns.Clear();
-
-            dataGridView2.Columns.Add("Number", "№");
-            dataGridView2.Columns.Add("Location", "Местоположение");
-            dataGridView2.Columns.Add("Info", "Неверный фрагмент");
-
-
-            dataGridView2.Columns["Number"].ValueType = typeof(int);
-            dataGridView2.Columns["Location"].ValueType = typeof(string);
-            dataGridView2.Columns["Info"].ValueType = typeof(string);
-
-            int classCount = 0;
-
-            int number = 1;
-            foreach (var token in parsedTokens)
+            if (dataGridView2.Columns.Count == 0)
             {
-                string location;
-                if (!string.IsNullOrEmpty(token.Info))
-                {
+                dataGridView2.Columns.Add("Number", "№");
+                dataGridView2.Columns.Add("Location", "Местоположение");
+                dataGridView2.Columns.Add("Info", "Неверный фрагмент");
 
-                    location = $"Находится от {token.StartPosition} символа до {token.EndPosition} символа";
-                    dataGridView2.Rows.Add(number, location, token.Info);
-                    number++;
-                    classCount++;
-
-                }
+                dataGridView2.Columns["Number"].ValueType = typeof(int);
+                dataGridView2.Columns["Location"].ValueType = typeof(string);
+                dataGridView2.Columns["Info"].ValueType = typeof(string);
             }
 
-            dataGridView2.Columns["Number"].HeaderText = $"№ (Ошибок: {classCount})";
+            foreach (var token in parsedTokens)
+            {
+                string location = $"От {token.StartPosition} до {token.EndPosition}";
+                dataGridView2.Rows.Add(token.Number, location, token.Info);
+               
+            }
         }
-
         private void изменитьШрифтToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (fontDialog1.ShowDialog() == DialogResult.OK)
@@ -1363,23 +913,29 @@ namespace Lab1
                 return;
             }
 
-            // Получаем токены из лексического анализатора
+
             List<Token> tokens = LexicalAnalysis(inputExpression);
 
-            // Преобразуем выражение в ПОЛИЗ
+
             List<string> poliz = ConvertToPoliz(tokens);
 
-            // Выводим полученный ПОЛИЗ в richTextBox2
+
             richTextBox2.Text = string.Join(" ", poliz);
         }
 
-        List<string> ConvertToPoliz(List<Token> tokens)
+        private List<string> ConvertToPoliz(List<Token> tokens)
         {
             List<string> poliz = new List<string>();
             Stack<Token> stack = new Stack<Token>();
+            int openingBrackets = 0;
+            int closingBrackets = 0;
 
-            foreach (Token token in tokens)
+            TokenType[] operators = { TokenType.Плюс, TokenType.Минус, TokenType.Умножить, TokenType.Разделить };
+
+            for (int i = 0; i < tokens.Count; i++)
             {
+                Token token = tokens[i];
+
                 switch (token.Type)
                 {
                     case TokenType.Целое_без_знака:
@@ -1389,7 +945,16 @@ namespace Lab1
                     case TokenType.Минус:
                     case TokenType.Умножить:
                     case TokenType.Разделить:
-                        while (stack.Any() && GetPriority(stack.Peek().Type) >= GetPriority(token.Type))
+                        if (i == 1 || i == tokens.Count - 1 || operators.Contains(tokens[i - 1].Type) || operators.Contains(tokens[i + 1].Type))
+                        {
+                            //          richTextBox1.AppendText("\nОшибка: Лишний оператор.\n");
+                            return poliz;
+
+                        }
+
+                        while (stack.Any() &&
+                               stack.Peek().Type != TokenType.открывающая_скобка &&
+                               GetPriority(stack.Peek().Type) >= GetPriority(token.Type))
                         {
                             poliz.Add(stack.Pop().Value);
                         }
@@ -1397,24 +962,51 @@ namespace Lab1
                         break;
                     case TokenType.открывающая_скобка:
                         stack.Push(token);
+                        openingBrackets++;
                         break;
                     case TokenType.Закрывающая_скобка:
+                        if (!stack.Any())
+                        {
+                            //       richTextBox1.AppendText("\nОшибка: Недостаточно открывающих скобок.\n");
+                            return poliz;
+                        }
+
                         while (stack.Peek().Type != TokenType.открывающая_скобка)
                         {
                             poliz.Add(stack.Pop().Value);
+                            if (!stack.Any())
+                            {
+                                //       richTextBox1.AppendText("\nОшибка: Недостаточно открывающих скобок.\n");
+                                return poliz;
+                            }
                         }
                         stack.Pop(); // Удаляем открывающую скобку
+                        closingBrackets++;
                         break;
+
                 }
             }
 
             while (stack.Any())
             {
+                if (stack.Peek().Type == TokenType.открывающая_скобка)
+                {
+                    //            richTextBox1.AppendText("\nОшибка: Имеется незакрытая открывающая скобка.\n");
+                    return poliz;
+                }
                 poliz.Add(stack.Pop().Value);
+            }
+
+            if (openingBrackets != closingBrackets)
+            {
+
+                //       richTextBox1.AppendText("\nОшибка: Количество открывающих и закрывающих скобок не совпадает.\n");
+                return poliz;
             }
 
             return poliz;
         }
+
 
         private static int GetPriority(TokenType type)
         {
@@ -1431,88 +1023,9 @@ namespace Lab1
             }
         }
 
-        class Parser
+        private void dataGridView2_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            private readonly List<Token> tokens;
-            private int currentPosition;
 
-            public Parser(List<Token> tokens)
-            {
-                this.tokens = tokens;
-                currentPosition = 0;
-            }
-
-            public void Parse()
-            {
-                E();
-                if (currentPosition != tokens.Count)
-                {
-                    throw new Exception("Unexpected token at the end of expression");
-                }
-            }
-
-            private void E()
-            {
-                T();
-                A();
-            }
-
-            private void A()
-            {
-                if (currentPosition < tokens.Count && (tokens[currentPosition].Type == TokenType.Плюс || tokens[currentPosition].Type == TokenType.Минус))
-                {
-                    Match(tokens[currentPosition].Type);
-                    T();
-                    A();
-                }
-            }
-
-            private void T()
-            {
-                O();
-                B();
-            }
-
-            private void B()
-            {
-                if (currentPosition < tokens.Count && (tokens[currentPosition].Type == TokenType.Умножить || tokens[currentPosition].Type == TokenType.Разделить))
-                {
-                    Match(tokens[currentPosition].Type);
-                    O();
-                    B();
-                }
-            }
-
-            private void O()
-            {
-                if (currentPosition < tokens.Count)
-                {
-                    if (tokens[currentPosition].Type == TokenType.Целое_без_знака || tokens[currentPosition].Type == TokenType.открывающая_скобка)
-                    {
-                        Match(tokens[currentPosition].Type);
-                    }
-                    else
-                    {
-                        throw new Exception("Unexpected token in expression");
-                    }
-                }
-                else
-                {
-                    throw new Exception("Unexpected end of expression");
-                }
-            }
-
-            private void Match(TokenType expectedToken)
-            {
-                if (currentPosition < tokens.Count && tokens[currentPosition].Type == expectedToken)
-                {
-                    currentPosition++;
-                }
-                else
-                {
-                    throw new Exception($"Unexpected token: {tokens[currentPosition].Value}");
-                }
-            }
         }
     }
  }

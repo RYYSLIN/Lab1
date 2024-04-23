@@ -112,7 +112,7 @@
             this.видToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1158, 30);
+            this.menuStrip1.Size = new System.Drawing.Size(1104, 28);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -125,7 +125,7 @@
             this.сохранитьКакToolStripMenuItem,
             this.выходToolStripMenuItem});
             this.файлToolStripMenuItem.Name = "файлToolStripMenuItem";
-            this.файлToolStripMenuItem.Size = new System.Drawing.Size(59, 26);
+            this.файлToolStripMenuItem.Size = new System.Drawing.Size(59, 24);
             this.файлToolStripMenuItem.Text = "Файл";
             // 
             // создатьToolStripMenuItem
@@ -173,7 +173,7 @@
             this.удалитьToolStripMenuItem,
             this.выделитьВсеToolStripMenuItem});
             this.правкаToolStripMenuItem.Name = "правкаToolStripMenuItem";
-            this.правкаToolStripMenuItem.Size = new System.Drawing.Size(74, 26);
+            this.правкаToolStripMenuItem.Size = new System.Drawing.Size(74, 24);
             this.правкаToolStripMenuItem.Text = "Правка";
             // 
             // отменитьToolStripMenuItem
@@ -237,7 +237,7 @@
             this.списокЛитературыToolStripMenuItem,
             this.исходныйКодПрограммыToolStripMenuItem});
             this.текстToolStripMenuItem.Name = "текстToolStripMenuItem";
-            this.текстToolStripMenuItem.Size = new System.Drawing.Size(59, 26);
+            this.текстToolStripMenuItem.Size = new System.Drawing.Size(59, 24);
             this.текстToolStripMenuItem.Text = "Текст";
             // 
             // постановкаЗадачиToolStripMenuItem
@@ -299,7 +299,7 @@
             // пускToolStripMenuItem
             // 
             this.пускToolStripMenuItem.Name = "пускToolStripMenuItem";
-            this.пускToolStripMenuItem.Size = new System.Drawing.Size(55, 26);
+            this.пускToolStripMenuItem.Size = new System.Drawing.Size(55, 24);
             this.пускToolStripMenuItem.Text = "Пуск";
             this.пускToolStripMenuItem.Click += new System.EventHandler(this.пускToolStripMenuItem_Click);
             // 
@@ -309,7 +309,7 @@
             this.вызовСправкиToolStripMenuItem,
             this.оПрограммеToolStripMenuItem});
             this.справкаToolStripMenuItem.Name = "справкаToolStripMenuItem";
-            this.справкаToolStripMenuItem.Size = new System.Drawing.Size(81, 26);
+            this.справкаToolStripMenuItem.Size = new System.Drawing.Size(81, 24);
             this.справкаToolStripMenuItem.Text = "Справка";
             // 
             // вызовСправкиToolStripMenuItem
@@ -332,7 +332,7 @@
             this.изменитьШрифтToolStripMenuItem,
             this.изменитьЯзыкToolStripMenuItem});
             this.видToolStripMenuItem.Name = "видToolStripMenuItem";
-            this.видToolStripMenuItem.Size = new System.Drawing.Size(49, 26);
+            this.видToolStripMenuItem.Size = new System.Drawing.Size(49, 24);
             this.видToolStripMenuItem.Text = "Вид";
             // 
             // изменитьШрифтToolStripMenuItem
@@ -376,9 +376,9 @@
             this.Copy,
             this.Cut,
             this.AboutProgramm});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 30);
+            this.toolStrip1.Location = new System.Drawing.Point(0, 28);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1158, 47);
+            this.toolStrip1.Size = new System.Drawing.Size(1104, 47);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -474,7 +474,7 @@
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 77);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 75);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -487,8 +487,8 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.tabControl1);
             this.splitContainer1.Panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer1_Panel2_Paint);
-            this.splitContainer1.Size = new System.Drawing.Size(1158, 508);
-            this.splitContainer1.SplitterDistance = 384;
+            this.splitContainer1.Size = new System.Drawing.Size(1104, 510);
+            this.splitContainer1.SplitterDistance = 386;
             this.splitContainer1.TabIndex = 5;
             // 
             // richTextBox1
@@ -501,7 +501,7 @@
             this.richTextBox1.Location = new System.Drawing.Point(0, 3);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(1155, 382);
+            this.richTextBox1.Size = new System.Drawing.Size(1101, 384);
             this.richTextBox1.TabIndex = 4;
             this.richTextBox1.Text = "";
             this.richTextBox1.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
@@ -515,7 +515,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1158, 120);
+            this.tabControl1.Size = new System.Drawing.Size(1104, 120);
             this.tabControl1.TabIndex = 6;
             // 
             // tabPage1
@@ -524,7 +524,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1150, 91);
+            this.tabPage1.Size = new System.Drawing.Size(1096, 91);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Сканер";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -540,7 +540,7 @@
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersWidth = 51;
             this.dataGridView1.RowTemplate.Height = 24;
-            this.dataGridView1.Size = new System.Drawing.Size(1151, 92);
+            this.dataGridView1.Size = new System.Drawing.Size(1097, 92);
             this.dataGridView1.TabIndex = 7;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick_1);
             // 
@@ -550,7 +550,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 25);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(1150, 91);
+            this.tabPage2.Size = new System.Drawing.Size(1096, 91);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Парсер";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -566,8 +566,9 @@
             this.dataGridView2.Name = "dataGridView2";
             this.dataGridView2.RowHeadersWidth = 51;
             this.dataGridView2.RowTemplate.Height = 24;
-            this.dataGridView2.Size = new System.Drawing.Size(1150, 91);
+            this.dataGridView2.Size = new System.Drawing.Size(1096, 91);
             this.dataGridView2.TabIndex = 0;
+            this.dataGridView2.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellContentClick);
             // 
             // tabPage3
             // 
@@ -575,7 +576,7 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 25);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(1150, 91);
+            this.tabPage3.Size = new System.Drawing.Size(1096, 91);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Вывод";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -586,7 +587,7 @@
             this.richTextBox2.Location = new System.Drawing.Point(3, 3);
             this.richTextBox2.Name = "richTextBox2";
             this.richTextBox2.ReadOnly = true;
-            this.richTextBox2.Size = new System.Drawing.Size(1144, 85);
+            this.richTextBox2.Size = new System.Drawing.Size(1090, 85);
             this.richTextBox2.TabIndex = 0;
             this.richTextBox2.Text = "";
             // 
@@ -597,7 +598,7 @@
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
-            this.ClientSize = new System.Drawing.Size(1158, 585);
+            this.ClientSize = new System.Drawing.Size(1104, 585);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.menuStrip1);
