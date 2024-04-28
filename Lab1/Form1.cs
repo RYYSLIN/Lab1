@@ -315,10 +315,17 @@ namespace Lab1
 
         }
         // тут начинается сканер ------------------------------------------------------------------------------------------
+        private bool buttonClicked = false;
         public void пускToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Scan();
-            Pol();
+            buttonClicked = true;
+            //FindWordsEndingWithT(); //9
+            //FindWordsEndingWithT2(); //17
+            //FindTimes();//23
+            // 9 17 23
+            Scan(); //  ультратоповый парсер 
+          //  Pol(); // 5 лвба
+          
         }
 
         public void Scan()
@@ -368,105 +375,248 @@ namespace Lab1
         {
             List<Token> tokens = new List<Token>();
             int position = 0;
-
-            while (position < text.Length)
+            if (buttonClicked)
             {
-                char currentChar = text[position];
+                while (position < text.Length)
+                {
+                    char currentChar = text[position];
 
-                if (position + 1 < text.Length && text.Substring(position, 2) == "::")
-                {
-                    tokens.Add(new Token((int)TokenType.оператор, TokenType.оператор, "::", position, position + 1, 2));
-                    position += 2;
-                }
-                else if (position + 7 < text.Length && text.Substring(position, 7) == "COMPLEX")
-                {
-                    tokens.Add(new Token((int)TokenType.структура, TokenType.структура, "COMPLEX", position, position + 5, 7));
-                    position += 7;
-                }
-                else if (text[position] == ' ')
-                {
-                    tokens.Add(new Token((int)TokenType.пробел, TokenType.пробел, " ", position, position, 1));
-                    position++;
-                }
-                else if (char.IsLetter(currentChar))
-                {
-                    // Идентификатор
-                    int identifierStart = position;
-                    while (position < text.Length && (char.IsLetterOrDigit(text[position]) || text[position] == '_'))
+                    if (position + 1 < text.Length && text.Substring(position, 2) == "::")
                     {
+                        tokens.Add(new Token((int)TokenType.оператор, TokenType.оператор, "::", position, position + 1, 2));
+                        position += 2;
+                    }
+                    else if (position + 7 < text.Length && text.Substring(position, 7) == "COMPLEX")
+                    {
+                        tokens.Add(new Token((int)TokenType.структура, TokenType.структура, "COMPLEX", position, position + 5, 7));
+                        position += 7;
+                    }
+                    else if (text[position] == ' ')
+                    {
+                        tokens.Add(new Token((int)TokenType.пробел, TokenType.пробел, " ", position, position, 1));
                         position++;
                     }
-                    string identifier = text.Substring(identifierStart, position - identifierStart);
-                    tokens.Add(new Token((int)TokenType.идетификатор, TokenType.идетификатор, identifier, identifierStart, position - 1, position - identifierStart));
-                }
-                else if (currentChar == '=')
-                {
-                    tokens.Add(new Token((int)TokenType.оператор_присваивания, TokenType.оператор_присваивания, "=", position, position + 1, 1));
-                    position++;
-                }
-                else if (currentChar == '(')
-                {
-                    tokens.Add(new Token((int)TokenType.открывающая_скобка, TokenType.открывающая_скобка, "(", position, position, 1));
-                    position++;
-                }
-                else if (currentChar == ')')
-                {
-                    tokens.Add(new Token((int)TokenType.Закрывающая_скобка, TokenType.Закрывающая_скобка, ")", position, position, 1));
-                    position++;
-                }
-                else if (char.IsDigit(currentChar) || currentChar == '-' || currentChar == '+')
-                {
-                    // Флаг наличия знака перед числом
-                    bool hasSign = currentChar == '-' || currentChar == '+';
-                    char sign = ' ';
-                    if (hasSign)
+                    else if (char.IsLetter(currentChar))
                     {
-                        sign = currentChar;
+                        // Идентификатор
+                        int identifierStart = position;
+                        while (position < text.Length && (char.IsLetterOrDigit(text[position]) || text[position] == '_'))
+                        {
+                            position++;
+                        }
+                        string identifier = text.Substring(identifierStart, position - identifierStart);
+                        tokens.Add(new Token((int)TokenType.идетификатор, TokenType.идетификатор, identifier, identifierStart, position - 1, position - identifierStart));
+                    }
+                    else if (currentChar == '=')
+                    {
+                        tokens.Add(new Token((int)TokenType.оператор_присваивания, TokenType.оператор_присваивания, "=", position, position + 1, 1));
+                        position++;
+                    }
+                    else if (currentChar == '(')
+                    {
+                        tokens.Add(new Token((int)TokenType.открывающая_скобка, TokenType.открывающая_скобка, "(", position, position, 1));
+                        position++;
+                    }
+                    else if (currentChar == ')')
+                    {
+                        tokens.Add(new Token((int)TokenType.Закрывающая_скобка, TokenType.Закрывающая_скобка, ")", position, position, 1));
                         position++;
                     }
 
-                    int numberStart = position;
-                    while (position < text.Length && (char.IsDigit(text[position]) || text[position] == '.'))
+
+                    else if (char.IsDigit(currentChar) || currentChar == '-' || currentChar == '+')
                     {
-                        position++;
+                        // Флаг наличия знака перед числом
+                        bool hasSign = currentChar == '-' || currentChar == '+';
+                        char sign = ' ';
+                        if (hasSign)
+                        {
+                            sign = currentChar;
+                            position++;
+                        }
+
+                        int numberStart = position;
+                        while (position < text.Length && (char.IsDigit(text[position]) || text[position] == '.'))
+                        {
+                            position++;
+                        }
+
+                        // Определение типа числа
+                        int length = position - numberStart;
+                        string number = text.Substring(numberStart, length);
+                        TokenType numberType = TokenType.Целое_без_знака;
+
+                        tokens.Add(new Token((int)numberType, numberType, number, numberStart, position - 1, length));
                     }
 
-                    // Определение типа числа
-                    int length = position - numberStart;
-                    string number = text.Substring(numberStart, length);
-                    TokenType numberType = TokenType.Целое_без_знака;
 
-                    tokens.Add(new Token((int)numberType, numberType, number, numberStart, position - 1, length));
+
+                    else if (char.IsDigit(currentChar))
+                    {
+                        // Флаг наличия знака перед числом
+
+
+                        int numberStart = position;
+                        while (position < text.Length && (char.IsDigit(text[position]) || text[position] == '.'))
+                        {
+                            position++;
+                        }
+
+                        // Определение типа числа
+                        int length = position - numberStart;
+                        string number = text.Substring(numberStart, length);
+                        TokenType numberType = TokenType.Целое_без_знака;
+
+                        tokens.Add(new Token((int)numberType, numberType, number, numberStart, position - 1, length));
+                    }
+
+                    else if (currentChar == ',')
+                    {
+                        tokens.Add(new Token((int)TokenType.символ_разделения_параметров, TokenType.символ_разделения_параметров, ",", position, position, 1));
+                        position++;
+                    }
+                    else if (currentChar == '*')
+                    {
+                        tokens.Add(new Token((int)TokenType.Умножить, TokenType.Умножить, "*", position, position, 1));
+                        position++;
+                    }
+                    else if (currentChar == '/')
+                    {
+                        tokens.Add(new Token((int)TokenType.Разделить, TokenType.Разделить, "/", position, position, 1));
+                        position++;
+                    }
+                    //Для 5 лабы + и -
+                    else if (currentChar == '-')
+                    {
+                        tokens.Add(new Token((int)TokenType.Минус, TokenType.Минус, "-", position, position, 1));
+                        position++;
+                    }
+                    else if (currentChar == '+')
+                    {
+                        tokens.Add(new Token((int)TokenType.Плюс, TokenType.Плюс, "+", position, position, 1));
+                        position++;
+                    }
+                    else
+                    {
+                        string currentChar1 = currentChar.ToString();
+                        string Error;
+                        int numberStart = position;
+                        Error = text.Substring(position);
+
+                        tokens.Add(new Token((int)TokenType.ERROR, TokenType.ERROR, currentChar1, numberStart, position, 1));
+                        position++;
+                    }
                 }
-                else if (currentChar == ',')
-                {
-                    tokens.Add(new Token((int)TokenType.символ_разделения_параметров, TokenType.символ_разделения_параметров, ",", position, position, 1));
-                    position++;
-                }
-                else if (currentChar == '*')
-                {
-                    tokens.Add(new Token((int)TokenType.Умножить, TokenType.Умножить, "*", position, position, 1));
-                    position++;
-                }
-                else if (currentChar == '/')
-                {
-                    tokens.Add(new Token((int)TokenType.Разделить, TokenType.Разделить, "/", position, position, 1));
-                    position++;
-                }
-                else
-                {
-                    string currentChar1 = currentChar.ToString();
-                    string Error;
-                    int numberStart = position;
-                    Error = text.Substring(position);
-                    tokens.Add(new Token((int)TokenType.ERROR, TokenType.ERROR, currentChar1, numberStart, position, 1));
-                    position++;
-                }
+                return tokens;
             }
+            else
+            {
+                while (position < text.Length)
+                {
+                    char currentChar = text[position];
 
-            return tokens;
+                    if (position + 1 < text.Length && text.Substring(position, 2) == "::")
+                    {
+                        tokens.Add(new Token((int)TokenType.оператор, TokenType.оператор, "::", position, position + 1, 2));
+                        position += 2;
+                    }
+                    else if (position + 7 < text.Length && text.Substring(position, 7) == "COMPLEX")
+                    {
+                        tokens.Add(new Token((int)TokenType.структура, TokenType.структура, "COMPLEX", position, position + 5, 7));
+                        position += 7;
+                    }
+                    else if (text[position] == ' ')
+                    {
+                        tokens.Add(new Token((int)TokenType.пробел, TokenType.пробел, " ", position, position, 1));
+                        position++;
+                    }
+                    else if (char.IsLetter(currentChar))
+                    {
+                        // Идентификатор
+                        int identifierStart = position;
+                        while (position < text.Length && (char.IsLetterOrDigit(text[position]) || text[position] == '_'))
+                        {
+                            position++;
+                        }
+                        string identifier = text.Substring(identifierStart, position - identifierStart);
+                        tokens.Add(new Token((int)TokenType.идетификатор, TokenType.идетификатор, identifier, identifierStart, position - 1, position - identifierStart));
+                    }
+                    else if (currentChar == '=')
+                    {
+                        tokens.Add(new Token((int)TokenType.оператор_присваивания, TokenType.оператор_присваивания, "=", position, position + 1, 1));
+                        position++;
+                    }
+                    else if (currentChar == '(')
+                    {
+                        tokens.Add(new Token((int)TokenType.открывающая_скобка, TokenType.открывающая_скобка, "(", position, position, 1));
+                        position++;
+                    }
+                    else if (currentChar == ')')
+                    {
+                        tokens.Add(new Token((int)TokenType.Закрывающая_скобка, TokenType.Закрывающая_скобка, ")", position, position, 1));
+                        position++;
+                    }
+
+                    else if (char.IsDigit(currentChar))
+                    {
+                        // Флаг наличия знака перед числом
+
+
+                        int numberStart = position;
+                        while (position < text.Length && (char.IsDigit(text[position]) || text[position] == '.'))
+                        {
+                            position++;
+                        }
+
+                        // Определение типа числа
+                        int length = position - numberStart;
+                        string number = text.Substring(numberStart, length);
+                        TokenType numberType = TokenType.Целое_без_знака;
+
+                        tokens.Add(new Token((int)numberType, numberType, number, numberStart, position - 1, length));
+                    }
+
+                    else if (currentChar == ',')
+                    {
+                        tokens.Add(new Token((int)TokenType.символ_разделения_параметров, TokenType.символ_разделения_параметров, ",", position, position, 1));
+                        position++;
+                    }
+                    else if (currentChar == '*')
+                    {
+                        tokens.Add(new Token((int)TokenType.Умножить, TokenType.Умножить, "*", position, position, 1));
+                        position++;
+                    }
+                    else if (currentChar == '/')
+                    {
+                        tokens.Add(new Token((int)TokenType.Разделить, TokenType.Разделить, "/", position, position, 1));
+                        position++;
+                    }
+                    //Для 5 лабы + и -
+                    else if (currentChar == '-')
+                    {
+                        tokens.Add(new Token((int)TokenType.Минус, TokenType.Минус, "-", position, position, 1));
+                        position++;
+                    }
+                    else if (currentChar == '+')
+                    {
+                        tokens.Add(new Token((int)TokenType.Плюс, TokenType.Плюс, "+", position, position, 1));
+                        position++;
+                    }
+                    else
+                    {
+                        string currentChar1 = currentChar.ToString();
+                        string Error;
+                        int numberStart = position;
+                        Error = text.Substring(position);
+
+                        tokens.Add(new Token((int)TokenType.ERROR, TokenType.ERROR, currentChar1, numberStart, position, 1));
+                        position++;
+                    }
+                }
+
+                return tokens;
+            }
         }
-
         public enum TokenType
         {
             структура = 1,
@@ -551,7 +701,10 @@ namespace Lab1
                 List<Token> deletedTokens = new List<Token>();
                 // Список для хранения всех найденных ошибок
                 List<Token> errorTokens = new List<Token>();
-
+                bool sko = false ;
+                bool sko2 = false;
+                bool w2 = false;
+                bool w3 = false;
                 TokenType[] expectedSequence = new TokenType[]
                 {
             TokenType.структура,
@@ -564,16 +717,26 @@ namespace Lab1
             TokenType.Целое_без_знака,
             TokenType.Закрывающая_скобка
                 };
-
+                
                 foreach (Token token in tokens)
                 {
-               
+                  
+                        if (token.Type == TokenType.Закрывающая_скобка)
+                        {
+                            sko = true;
+                        }
+                        if (token.Type == TokenType.открывающая_скобка)
+                        {
+                            sko2 = true;
+                            continue;
+                        }
+                    
                     // Проверяем, является ли текущий токен пробелом
                     if (token.Type == TokenType.пробел)
                     {
                         continue; // Пропускаем пробелы
                     }
-                   
+                       
                     // Если достигнут конец ожидаемой последовательности, сбрасываем индекс и начинаем заново
                     if (tokenIndex >= expectedSequence.Length)
                     {
@@ -616,19 +779,41 @@ namespace Lab1
                         {
                             continue;
                         }
+                        if (token.Type == TokenType.Целое_без_знака)
+                        {
+                            continue;
+                        }
                         errorTokens.Add(token);
                     }
+                    if (!sko && w2)
+                    {
+                        errorTokens.Add(token);
 
+                    }
+                    if (!sko2&&w3)
+                    {
+                        errorTokens.Add(token);
+                    }
                     // Увеличиваем индекс, если текущий токен соответствует ожидаемому
                     tokenIndex++;
                 }
-
+                 
                 // Преобразование всех найденных ошибок в объекты ParsedToken
                 foreach (Token errorToken in errorTokens)
                 {
+                    if (!sko2 && !w3)
+                    {
+                        w3 = true;
+                        parsedTokens.Add(new ParsedToken(0, 0, 0, "Нет открытой скобки"));
+                    }
+                    if (!sko&&!w2)
+                    {
+                        w2 = true;
+                        parsedTokens.Add(new ParsedToken(0,0, 0, "Незаконченное выражение"));
+                    }
                     // Предполагается, что у токена есть свойства StartPosition и EndPosition
                     // которые указывают на его начальную и конечную позиции в исходном тексте
-                    parsedTokens.Add(new ParsedToken(lineNumber, errorToken.Column, errorToken.ColumnNext, errorToken.Value));
+                    parsedTokens.Add(new ParsedToken(lineNumber, errorToken.Column, errorToken.ColumnNext+1, errorToken.Value));
                 }
                 // Добавляем удаленные токены в список ошибок
               
@@ -646,7 +831,7 @@ namespace Lab1
             }
 
             dataGridView2.AutoGenerateColumns = false;
-          
+
             dataGridView2.Rows.Clear();
             dataGridView2.Columns.Clear();
             if (dataGridView2.Columns.Count == 0)
@@ -660,11 +845,12 @@ namespace Lab1
                 dataGridView2.Columns["Info"].ValueType = typeof(string);
             }
 
+            // Добавляем строки с данными
+            int rowNum = 1;
             foreach (var token in parsedTokens)
             {
                 string location = $"От {token.StartPosition} до {token.EndPosition}";
-                dataGridView2.Rows.Add(token.Number, location, token.Info);
-               
+                dataGridView2.Rows.Add(rowNum++, location, token.Info);
             }
         }
         private void изменитьШрифтToolStripMenuItem_Click(object sender, EventArgs e)
@@ -905,6 +1091,7 @@ namespace Lab1
         }
         private void Pol()
         {
+            dataGridView2.Rows.Clear();
             string inputExpression = richTextBox1.Text;
 
             if (string.IsNullOrEmpty(inputExpression))
@@ -913,12 +1100,12 @@ namespace Lab1
                 return;
             }
 
-
             List<Token> tokens = LexicalAnalysis(inputExpression);
-
 
             List<string> poliz = ConvertToPoliz(tokens);
 
+            if (poliz == null)
+                return;
 
             richTextBox2.Text = string.Join(" ", poliz);
         }
@@ -945,11 +1132,10 @@ namespace Lab1
                     case TokenType.Минус:
                     case TokenType.Умножить:
                     case TokenType.Разделить:
-                        if (i == 1 || i == tokens.Count - 1 || operators.Contains(tokens[i - 1].Type) || operators.Contains(tokens[i + 1].Type))
+                        if (i == 0 || i == tokens.Count - 1 || operators.Contains(tokens[i - 1].Type) || operators.Contains(tokens[i + 1].Type))
                         {
-                            //          richTextBox1.AppendText("\nОшибка: Лишний оператор.\n");
-                            return poliz;
-
+                            DisplayErrors(new List<string> { "Ошибка: Лишний оператор." });
+                            return null;
                         }
 
                         while (stack.Any() &&
@@ -967,8 +1153,8 @@ namespace Lab1
                     case TokenType.Закрывающая_скобка:
                         if (!stack.Any())
                         {
-                            //       richTextBox1.AppendText("\nОшибка: Недостаточно открывающих скобок.\n");
-                            return poliz;
+                            DisplayErrors(new List<string> { "Ошибка: Недостаточно открывающих скобок." });
+                            return null;
                         }
 
                         while (stack.Peek().Type != TokenType.открывающая_скобка)
@@ -976,14 +1162,13 @@ namespace Lab1
                             poliz.Add(stack.Pop().Value);
                             if (!stack.Any())
                             {
-                                //       richTextBox1.AppendText("\nОшибка: Недостаточно открывающих скобок.\n");
-                                return poliz;
+                                DisplayErrors(new List<string> { "Ошибка: Недостаточно открывающих скобок." });
+                                return null;
                             }
                         }
                         stack.Pop(); // Удаляем открывающую скобку
                         closingBrackets++;
                         break;
-
                 }
             }
 
@@ -991,22 +1176,20 @@ namespace Lab1
             {
                 if (stack.Peek().Type == TokenType.открывающая_скобка)
                 {
-                    //            richTextBox1.AppendText("\nОшибка: Имеется незакрытая открывающая скобка.\n");
-                    return poliz;
+                    DisplayErrors(new List<string> { "Ошибка: Имеется незакрытая открывающая скобка." });
+                    return null;
                 }
                 poliz.Add(stack.Pop().Value);
             }
 
             if (openingBrackets != closingBrackets)
             {
-
-                //       richTextBox1.AppendText("\nОшибка: Количество открывающих и закрывающих скобок не совпадает.\n");
-                return poliz;
+                DisplayErrors(new List<string> { "Ошибка: Количество открывающих и закрывающих скобок не совпадает." });
+                return null;
             }
 
             return poliz;
         }
-
 
         private static int GetPriority(TokenType type)
         {
@@ -1018,14 +1201,132 @@ namespace Lab1
                 case TokenType.Умножить:
                 case TokenType.Разделить:
                     return 2;
+                case TokenType.открывающая_скобка:
+                case TokenType.Закрывающая_скобка:
+                    return 0; // Приоритет скобок не учитывается при формировании ПОЛИЗа
                 default:
                     return 0;
             }
         }
 
+        public void DisplayErrors(List<string> errors)
+        {
+            dataGridView2.DataSource = null;
+            dataGridView2.Rows.Clear();
+            dataGridView2.Columns.Clear();
+
+            // Проверка на null перед обращением к dataGridView2
+            if (dataGridView2 == null)
+            {
+                // Обработка случая, когда dataGridView2 не инициализирован
+                return;
+            }
+
+            // Очистка данных в dataGridView2
+           
+            
+            // Добавление столбца для вывода ошибок
+            dataGridView2.Columns.Add("Error", "Ошибка");
+
+            // Добавление ошибок в DataGridView
+            foreach (var error in errors)
+            {
+                dataGridView2.Rows.Add(error);
+            }
+        }
         private void dataGridView2_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
+        }
+
+        // 9
+        private void FindWordsEndingWithT()
+        {
+            string inputText = richTextBox1.Text;
+            List<(string word, int startIndex)> wordsEndingWithT = new List<(string, int)>();
+
+            // Используем регулярное выражение для поиска слов, заканчивающихся на "t" или "T"
+            Regex regex = new Regex(@"\b\w*[tT]\b");
+
+            MatchCollection matches = regex.Matches(inputText);
+
+            foreach (Match match in matches)
+            {
+                wordsEndingWithT.Add((match.Value, match.Index));
+            }
+
+            // Выводим найденные слова в RichTextBox2
+            richTextBox2.Text = string.Join(Environment.NewLine, wordsEndingWithT.Select(word => $"{word.word} (позиция: {word.startIndex})"));
+        }
+        private void FindWordsEndingWithT2()
+        {
+            string inputText = richTextBox1.Text;
+            string pattern = @"\b(201[0-9]|202[0-3])\b";
+            Regex regex = new Regex(pattern);
+
+            MatchCollection matches = regex.Matches(inputText);
+
+            // Очищаем richTextBox2 перед записью новых результатов
+            richTextBox2.Clear();
+
+            if (matches.Count > 0)
+            {
+                foreach (Match match in matches)
+                {
+                    richTextBox2.AppendText($"Год: {match.Value}, Позиция: {match.Index}" + Environment.NewLine);
+                }
+            }
+            else
+            {
+                richTextBox2.AppendText("Годы между 2010 и 2024 не найдены.");
+            }
+        }
+        private void FindTimes()
+        {
+            string inputText = richTextBox1.Text;
+            List<(string time, int startIndex)> foundTimes = new List<(string, int)>();
+
+            // Используем регулярное выражение для поиска времени в формате "ЧЧ:ММ:СС"
+            Regex regex = new Regex(@"\b(?:0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]\b");
+
+            MatchCollection matches = regex.Matches(inputText);
+
+            foreach (Match match in matches)
+            {
+                foundTimes.Add((match.Value, match.Index));
+            }
+
+            // Выводим найденные временные значения в RichTextBox2 с указанием начальной позиции
+            richTextBox2.Clear();
+            foreach (var time in foundTimes)
+            {
+                richTextBox2.AppendText($"{time.time} (начальная позиция: {time.startIndex}){Environment.NewLine}");
+            }
+        }
+
+        private void лаборатрнаяРабота6ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Pol();
+        }
+
+        private void лаборатрнаяРабота6ToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+          
+        }
+
+        private void часть1ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FindWordsEndingWithT();
+        }
+
+        private void часть2ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FindWordsEndingWithT2();
+        }
+
+        private void часть3ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FindTimes();
         }
     }
  }
