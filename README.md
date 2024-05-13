@@ -208,3 +208,22 @@ COMPLEX:: XEZ121 =(+42,-4.0)
 ![image](https://github.com/RYYSLIN/Lab1/assets/160394383/fc1018bc-f7c4-418a-8caa-c6af66637361)
 
 
+
+
+
+Лабораторная  работа 7
+
+
+
+
+![image](https://github.com/RYYSLIN/Lab1/assets/160394383/bdb16758-d2fa-4841-aefd-35f9b55b1e5b)
+
+
+
+
+![image](https://github.com/RYYSLIN/Lab1/assets/160394383/fa065056-c5cb-4397-8d44-32e682e9c62b)
+
+
+
+
+
