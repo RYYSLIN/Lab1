@@ -9,8 +9,10 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -20,9 +22,9 @@ using static Lab1.Form1;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolBar;
-
 namespace Lab1
 {
+
     public partial class Form1 : Form
     {
 
@@ -292,8 +294,9 @@ namespace Lab1
         {
             изменитьЯзыкToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Shift | Keys.L;
             вернутьЯзыкToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Shift | Keys.R;
-            пускToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Shift | Keys.J;
+            пускToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Shift | Keys.Q;
             вызовСправкиToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Shift | Keys.P;
+            лаборатрнаяРабота6ToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Shift | Keys.W;
         }
 
         private void AboutProgram()
@@ -324,10 +327,11 @@ namespace Lab1
             //FindTimes();//23
             // 9 17 23
             Scan(); //  ультратоповый парсер 
-          //  Pol(); // 5 лвба
-          
-        }
+                    //  Pol(); // 5 лвба
 
+        }
+        int Ckd = 0;
+        int zcd = 0;
         public void Scan()
         {
             string text = richTextBox1.Text;
@@ -345,21 +349,44 @@ namespace Lab1
 
             foreach (var token in tokens)
             {
+                if (token.Cod == (int)TokenType.Закрывающая_скобка)
+                {
+                    zcd++;
+                }
+                if (token.Cod == (int)TokenType.открывающая_скобка)
+                {
+                    Ckd++;
+                }
                 dataTable.Rows.Add(token.Cod, token.Type.ToString(), token.Value, token.Column + 1, token.ColumnNext + 1);
             }
             dataGridView1.DataSource = dataTable;
+
+            // Создаем экземпляр парсера
             Parser parser = new Parser();
+            // Парсим токены
+            //List<ParsedToken> parsedTokens = parser.ParseTokens(tokens);
+            //List<ParsedToken> parsedTokens = parser.ParseTokens(tokens);
+            //// Отображаем результат парсинга
+            //DisplayParsedTokens(parsedTokens);
             List<ParsedToken> parsedTokens = parser.ParseTokens(tokens);
+
             DisplayParsedTokens(parsedTokens);
+            Ckd = 0;
+            zcd = 0;
+            //// Отображаем ошибки парсинга
+            //DisplayParseErrors(parser.GetParseErrors());
         }
+
         public class HtmlHelper
         {
             public static void OpenInBrowser(string path)
             {
                 if (System.IO.File.Exists(path) || IsUrl(path))
                 {
-                    Process p = new Process();
-                    p.StartInfo = new ProcessStartInfo(path) { UseShellExecute = true };
+                    Process p = new Process
+                    {
+                        StartInfo = new ProcessStartInfo(path) { UseShellExecute = true }
+                    };
                     p.Start();
                 }
             }
@@ -370,7 +397,6 @@ namespace Lab1
                 return Regex.IsMatch(input, pattern);
             }
         }
-
         public List<Token> LexicalAnalysis(string text)
         {
             List<Token> tokens = new List<Token>();
@@ -381,6 +407,12 @@ namespace Lab1
                 {
                     char currentChar = text[position];
 
+                    if (char.IsWhiteSpace(currentChar)) // Пропускаем пробелы
+                    {
+                        position++;
+                        continue;
+                    }
+
                     if (position + 1 < text.Length && text.Substring(position, 2) == "::")
                     {
                         tokens.Add(new Token((int)TokenType.оператор, TokenType.оператор, "::", position, position + 1, 2));
@@ -388,7 +420,7 @@ namespace Lab1
                     }
                     else if (position + 7 < text.Length && text.Substring(position, 7) == "COMPLEX")
                     {
-                        tokens.Add(new Token((int)TokenType.структура, TokenType.структура, "COMPLEX", position, position + 5, 7));
+                        tokens.Add(new Token((int)TokenType.Ключевое_слово, TokenType.Ключевое_слово, "COMPLEX", position, position + 5, 7));
                         position += 7;
                     }
                     else if (text[position] == ' ')
@@ -475,25 +507,9 @@ namespace Lab1
                         tokens.Add(new Token((int)TokenType.символ_разделения_параметров, TokenType.символ_разделения_параметров, ",", position, position, 1));
                         position++;
                     }
-                    else if (currentChar == '*')
+                    else if (currentChar == ';')
                     {
-                        tokens.Add(new Token((int)TokenType.Умножить, TokenType.Умножить, "*", position, position, 1));
-                        position++;
-                    }
-                    else if (currentChar == '/')
-                    {
-                        tokens.Add(new Token((int)TokenType.Разделить, TokenType.Разделить, "/", position, position, 1));
-                        position++;
-                    }
-                    //Для 5 лабы + и -
-                    else if (currentChar == '-')
-                    {
-                        tokens.Add(new Token((int)TokenType.Минус, TokenType.Минус, "-", position, position, 1));
-                        position++;
-                    }
-                    else if (currentChar == '+')
-                    {
-                        tokens.Add(new Token((int)TokenType.Плюс, TokenType.Плюс, "+", position, position, 1));
+                        tokens.Add(new Token((int)TokenType.закрывающий_оператор, TokenType.закрывающий_оператор, ";", position, position, 1));
                         position++;
                     }
                     else
@@ -513,17 +529,25 @@ namespace Lab1
             {
                 while (position < text.Length)
                 {
+                    if (char.IsWhiteSpace(text[position]))
+                    {
+                        // Пропускаем пробелы и другие пробельные символы
+                        position++;
+                        continue;
+                    }
                     char currentChar = text[position];
 
-                    if (position + 1 < text.Length && text.Substring(position, 2) == "::")
+
+
+                    if (position + 5 < text.Length && text.Substring(position, 5) == "begin")
                     {
-                        tokens.Add(new Token((int)TokenType.оператор, TokenType.оператор, "::", position, position + 1, 2));
-                        position += 2;
+                        tokens.Add(new Token((int)TokenType.структура1, TokenType.структура1, "begin", position, position + 3, 7));
+                        position += 5;
                     }
-                    else if (position + 7 < text.Length && text.Substring(position, 7) == "COMPLEX")
+                    else if (position + 3 < text.Length && text.Substring(position, 3) == "end")
                     {
-                        tokens.Add(new Token((int)TokenType.структура, TokenType.структура, "COMPLEX", position, position + 5, 7));
-                        position += 7;
+                        tokens.Add(new Token((int)TokenType.структура2, TokenType.структура2, "end", position, position + 1, 7));
+                        position += 3;
                     }
                     else if (text[position] == ' ')
                     {
@@ -541,10 +565,10 @@ namespace Lab1
                         string identifier = text.Substring(identifierStart, position - identifierStart);
                         tokens.Add(new Token((int)TokenType.идетификатор, TokenType.идетификатор, identifier, identifierStart, position - 1, position - identifierStart));
                     }
-                    else if (currentChar == '=')
+                    else if (position + 1 < text.Length && text.Substring(position, 2) == ":=")
                     {
-                        tokens.Add(new Token((int)TokenType.оператор_присваивания, TokenType.оператор_присваивания, "=", position, position + 1, 1));
-                        position++;
+                        tokens.Add(new Token((int)TokenType.оператор_присваивания, TokenType.оператор_присваивания, ":=", position, position + 1, 1));
+                        position += 2;
                     }
                     else if (currentChar == '(')
                     {
@@ -556,12 +580,14 @@ namespace Lab1
                         tokens.Add(new Token((int)TokenType.Закрывающая_скобка, TokenType.Закрывающая_скобка, ")", position, position, 1));
                         position++;
                     }
-
+                    else if (currentChar == ';')
+                    {
+                        tokens.Add(new Token((int)TokenType.закрывающий_оператор, TokenType.закрывающий_оператор, ";", position, position, 1));
+                        position++;
+                    }
                     else if (char.IsDigit(currentChar))
                     {
                         // Флаг наличия знака перед числом
-
-
                         int numberStart = position;
                         while (position < text.Length && (char.IsDigit(text[position]) || text[position] == '.'))
                         {
@@ -575,7 +601,6 @@ namespace Lab1
 
                         tokens.Add(new Token((int)numberType, numberType, number, numberStart, position - 1, length));
                     }
-
                     else if (currentChar == ',')
                     {
                         tokens.Add(new Token((int)TokenType.символ_разделения_параметров, TokenType.символ_разделения_параметров, ",", position, position, 1));
@@ -612,14 +637,15 @@ namespace Lab1
                         tokens.Add(new Token((int)TokenType.ERROR, TokenType.ERROR, currentChar1, numberStart, position, 1));
                         position++;
                     }
-                }
 
+
+                }
                 return tokens;
             }
         }
         public enum TokenType
         {
-            структура = 1,
+            Ключевое_слово = 1,
             пробел = 4,
             оператор = 3,
             идетификатор = 2,
@@ -635,7 +661,11 @@ namespace Lab1
             Подчеркивание,
             Умножить = 16,
             Разделить = 17,
-            недостающий_идентификатор
+            недостающий_идентификатор,
+            закрывающий_оператор,
+            структура1,
+            структура2
+
         }
 
         public class Token
@@ -691,6 +721,8 @@ namespace Lab1
 
 
 
+
+
         public class Parser
         {
             public List<ParsedToken> ParseTokens(List<Token> tokens)
@@ -698,127 +730,81 @@ namespace Lab1
                 List<ParsedToken> parsedTokens = new List<ParsedToken>();
                 int lineNumber = 1;
                 int tokenIndex = 0; // Индекс ожидаемого токена
-                List<Token> deletedTokens = new List<Token>();
+
                 // Список для хранения всех найденных ошибок
                 List<Token> errorTokens = new List<Token>();
-                bool sko = false ;
-                bool sko2 = false;
-                bool w2 = false;
-                bool w3 = false;
+
+                // Словарь для хранения флагов обработанных типов токенов
+                Dictionary<TokenType, bool> processedTypes = new Dictionary<TokenType, bool>();
+
+                // Массив ожидаемой последовательности токенов
                 TokenType[] expectedSequence = new TokenType[]
                 {
-            TokenType.структура,
-            TokenType.оператор,
-            TokenType.идетификатор,
-            TokenType.оператор_присваивания,
-            TokenType.открывающая_скобка,
-            TokenType.Целое_без_знака,
-            TokenType.символ_разделения_параметров,
-            TokenType.Целое_без_знака,
-            TokenType.Закрывающая_скобка
+        TokenType.Ключевое_слово,
+        TokenType.оператор,
+        TokenType.идетификатор,
+        TokenType.оператор_присваивания,
+        TokenType.открывающая_скобка,
+        TokenType.Целое_без_знака,
+        TokenType.символ_разделения_параметров,
+        TokenType.Целое_без_знака,
+        TokenType.Закрывающая_скобка,
+        TokenType.закрывающий_оператор
                 };
-                
+
+                // Проходим по ожидаемой последовательности токенов
+                foreach (TokenType expectedToken in expectedSequence)
+                {
+                    // Проверяем, была ли уже найдена ошибка для данного типа токена
+                    if (processedTypes.ContainsKey(expectedToken) && processedTypes[expectedToken])
+                    {
+                        continue; // Пропускаем обработку, если уже была найдена ошибка для данного типа токена
+                    }
+
+                    bool tokenFound = false;
+                    foreach (Token token in tokens)
+                    {
+                        if (token.Type == expectedToken)
+                        {
+                            tokenFound = true;
+                            break;
+                        }
+                    }
+
+                    // Если токен не найден, добавляем ошибку с примерными позициями
+                    if (!tokenFound)
+                    {
+                        // Примерные позиции
+                        int startPosition = tokens.Count > 0 ? tokens[0].Column : 0;
+                        int endPosition = tokens.Count > 0 ? tokens[tokens.Count - 1].ColumnNext + 1 : 0;
+                        parsedTokens.Add(new ParsedToken(0, startPosition, endPosition, "Отсутствует ожидаемый токен: " + expectedToken.ToString()));
+                        // Устанавливаем флаг ошибки для данного типа токена
+                        processedTypes[expectedToken] = true;
+                    }
+                }
+
+                // Добавляем примерные позиции для токенов типа ERROR
                 foreach (Token token in tokens)
                 {
-                  
-                        if (token.Type == TokenType.Закрывающая_скобка)
-                        {
-                            sko = true;
-                        }
-                        if (token.Type == TokenType.открывающая_скобка)
-                        {
-                            sko2 = true;
-                            continue;
-                        }
-                    
-                    // Проверяем, является ли текущий токен пробелом
-                    if (token.Type == TokenType.пробел)
+                    if (token.Type == TokenType.ERROR)
                     {
-                        continue; // Пропускаем пробелы
+                        // Если токен типа ERROR и не является ":" (по условиям вашего кода)
+                        if (token.Value != ":")
+                        {
+                            int startPosition = token.Column;
+                            int endPosition = token.ColumnNext + 1;
+                            parsedTokens.Add(new ParsedToken(0, startPosition, endPosition, "Ошибка: " + token.Value));
+                        }
                     }
-                       
-                    // Если достигнут конец ожидаемой последовательности, сбрасываем индекс и начинаем заново
-                    if (tokenIndex >= expectedSequence.Length)
-                    {
-                        tokenIndex = 0;
-                        lineNumber++;
-                    }
-                    if (tokenIndex >= tokens.Count)
-                    {
-                        deletedTokens.Add(token);
-                        continue;
-                    }
-                    // Проверяем, соответствует ли текущий токен ожидаемому
-                    if (token.Type != expectedSequence[tokenIndex])
-                    {
-                        
-                        if (token.Type==TokenType.ERROR)
-                        {
-                            errorTokens.Add(token);
-                            continue;
-                        }
-                        if(token.Type == TokenType.оператор)
-                        {
-                            continue;
-                        }
-                        
-                        if (token.Type == TokenType.оператор_присваивания)
-                        {
-                            continue;
-                        }
-                        if (token.Type == TokenType.открывающая_скобка)
-                        {
-                            continue;
-                        }
-                        
-                        if (token.Type == TokenType.символ_разделения_параметров)
-                        {
-                            continue;
-                        }
-                        if (token.Type == TokenType.Закрывающая_скобка)
-                        {
-                            continue;
-                        }
-                        if (token.Type == TokenType.Целое_без_знака)
-                        {
-                            continue;
-                        }
-                        errorTokens.Add(token);
-                    }
-                    if (!sko && w2)
-                    {
-                        errorTokens.Add(token);
 
-                    }
-                    if (!sko2&&w3)
-                    {
-                        errorTokens.Add(token);
-                    }
-                    // Увеличиваем индекс, если текущий токен соответствует ожидаемому
-                    tokenIndex++;
+                    // Помечаем тип токена как обработанный
+                    processedTypes[token.Type] = true;
                 }
-                 
-                // Преобразование всех найденных ошибок в объекты ParsedToken
-                foreach (Token errorToken in errorTokens)
-                {
-                    if (!sko2 && !w3)
-                    {
-                        w3 = true;
-                        parsedTokens.Add(new ParsedToken(0, 0, 0, "Нет открытой скобки"));
-                    }
-                    if (!sko&&!w2)
-                    {
-                        w2 = true;
-                        parsedTokens.Add(new ParsedToken(0,0, 0, "Незаконченное выражение"));
-                    }
-                    // Предполагается, что у токена есть свойства StartPosition и EndPosition
-                    // которые указывают на его начальную и конечную позиции в исходном тексте
-                    parsedTokens.Add(new ParsedToken(lineNumber, errorToken.Column, errorToken.ColumnNext+1, errorToken.Value));
-                }
-                // Добавляем удаленные токены в список ошибок
-              
+
                 return parsedTokens;
             }
+
+
         }
 
         public void DisplayParsedTokens(List<ParsedToken> parsedTokens)
@@ -844,7 +830,17 @@ namespace Lab1
                 dataGridView2.Columns["Location"].ValueType = typeof(string);
                 dataGridView2.Columns["Info"].ValueType = typeof(string);
             }
+            if (((Ckd >= 2) && Ckd > zcd && zcd > 0) || (Ckd & zcd) > 1)
 
+            {
+                parsedTokens.Add(new ParsedToken(0, 0, 0, "лишняя открытая скобочка"));
+
+            }
+            if (((Ckd > 0) && Ckd < zcd && zcd >= 2) || (Ckd & zcd) > 1)
+            {
+                parsedTokens.Add(new ParsedToken(0, 0, 0, "лишняя закрытая скобочка"));
+
+            }
             // Добавляем строки с данными
             int rowNum = 1;
             foreach (var token in parsedTokens)
@@ -853,6 +849,10 @@ namespace Lab1
                 dataGridView2.Rows.Add(rowNum++, location, token.Info);
             }
         }
+
+
+
+
         private void изменитьШрифтToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (fontDialog1.ShowDialog() == DialogResult.OK)
@@ -870,14 +870,12 @@ namespace Lab1
                 }
             }
         }
-
         private void fontDialog1_Apply(object sender, EventArgs e)
         {
 
         }
 
         private string previousLanguage = "";
-
         private void изменитьЯзыкToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Сохраняем текущий язык
@@ -889,28 +887,26 @@ namespace Lab1
             // Обновляем тексты элементов управления
             UpdateUI();
         }
-
-
         private void UpdateUI1()
         {
 
-       
-            файлToolStripMenuItem.Text =Resource1.File;
+
+            файлToolStripMenuItem.Text = Resource1.File;
             вставитьToolStripMenuItem.Text = Resource1.CNTRLV;
             методАнализаToolStripMenuItem.Text = Resource1.MetodAnaliza;
-            классификацияГрамматикиToolStripMenuItem.Text =Resource1.KlassiGRAMMATIC;
-            копироватьToolStripMenuItem.Text =Resource1.CNTRLC;
+            классификацияГрамматикиToolStripMenuItem.Text = Resource1.KlassiGRAMMATIC;
+            копироватьToolStripMenuItem.Text = Resource1.CNTRLC;
             правкаToolStripMenuItem.Text = Resource1.Pravka;
             текстToolStripMenuItem.Text = Resource1.TXT;
             пускToolStripMenuItem.Text = Resource1.Pusk;
             справкаToolStripMenuItem.Text = Resource1.Cpravka;
-            оПрограммеToolStripMenuItem.Text= Resource1.Oprogamme;
+            оПрограммеToolStripMenuItem.Text = Resource1.Oprogamme;
             видToolStripMenuItem.Text = Resource1.VID;
             изменитьШрифтToolStripMenuItem.Text = Resource1.SHRIFT;
-            изменитьЯзыкToolStripMenuItem.Text =Resource1.Langvich;
+            изменитьЯзыкToolStripMenuItem.Text = Resource1.Langvich;
             создатьToolStripMenuItem.Text = Resource1.Cozdat;
             открытьToolStripMenuItem.Text = Resource1.Open;
-            сохранитьToolStripMenuItem.Text =Resource1.Safe;
+            сохранитьToolStripMenuItem.Text = Resource1.Safe;
             сохранитьКакToolStripMenuItem.Text = Resource1.SafeKak;
             выходToolStripMenuItem.Text = Resource1.EXIT;
             отменитьToolStripMenuItem.Text = Resource1.Otmena;
@@ -924,12 +920,12 @@ namespace Lab1
             текстовыйToolStripMenuItem.Text = Resource1.PrimerTEXT;
             исходныйКодПрограммыToolStripMenuItem.Text = Resource1.KODISVOD;
             tabPage1.Text = Resource1.Ckaner;
-            tabPage2.Text =Resource1.Parser;
+            tabPage2.Text = Resource1.Parser;
             tabPage3.Text = Resource1.Vivod;
             вырезатьToolStripMenuItem.Text = Resource1.VIREZAT;
             вернутьЯзыкToolStripMenuItem.Text = Resource1.Vernutiazik;
             вызовСправкиToolStripMenuItem.Text = Resource1.VizovCPravki;
-           
+
             ComponentResourceManager resources = new ComponentResourceManager(this.GetType());
             resources.ApplyResources(this, "$this");
             foreach (Control control in this.Controls)
@@ -1015,17 +1011,42 @@ namespace Lab1
                 UpdateUI1();
             }
         }
-
         private void постановкаЗадачиToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Task();
         }
+        private void OpenHtmlFileButton_Click(object sender, EventArgs e)
+        {
+            string htmlFilePath = @"C:\path\to\your\file.html"; // Путь к вашему HTML-файлу
+            OpenInBrowser(htmlFilePath);
+        }
+
+        private static void OpenInBrowser(string path)
+        {
+            if (System.IO.File.Exists(path) || IsUrl(path))
+            {
+                Process p = new Process
+                {
+                    StartInfo = new ProcessStartInfo(path) { UseShellExecute = true }
+                };
+                p.Start();
+            }
+            else
+            {
+                MessageBox.Show("Файл не найден или неверный URL.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private static bool IsUrl(string input)
+        {
+            string pattern = @"^(https?|ftp)://[^\s/$.?#].[^\s]*$";
+            return System.Text.RegularExpressions.Regex.IsMatch(input, pattern);
+        }
         private void Task()
         {
 
-            HtmlHelper.OpenInBrowser("Properties\\Task.html\"");
+            OpenInBrowser(@"C:\Users\ryysl\source\repos\Lab1\Lab1\Properties\Task.html");
         }
-
         private void грамматикаToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Gramm();
@@ -1033,9 +1054,8 @@ namespace Lab1
         private void Gramm()
         {
 
-            HtmlHelper.OpenInBrowser("Properties\\Grammatic.html\"");
+            OpenInBrowser(@"C:\Users\ryysl\source\repos\Lab1\Lab1\Properties\Grammatic.html");
         }
-
         private void классификацияГрамматикиToolStripMenuItem_Click(object sender, EventArgs e)
         {
             KlassicGramm();
@@ -1043,14 +1063,12 @@ namespace Lab1
         private void KlassicGramm()
         {
 
-            HtmlHelper.OpenInBrowser("Properties\\ClassifGRAMM.html\"");
+            OpenInBrowser(@"C:\Users\ryysl\source\repos\Lab1\Lab1\Properties\ClassifGRAMM.html");
         }
-
         private void методАнализаToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            HtmlHelper.OpenInBrowser("Properties\\MetodAnaliz.html\"");
+            OpenInBrowser(@"C:\Users\ryysl\source\repos\Lab1\Lab1\Properties\MetodAnaliz.html");
         }
-
         private void диагностикаToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Diagnostika();
@@ -1058,19 +1076,17 @@ namespace Lab1
         private void Diagnostika()
         {
 
-            HtmlHelper.OpenInBrowser("Properties\\Netralization.html\"");
+            OpenInBrowser(@"C:\\Users\\ryysl\\source\\repos\\Lab1\\Lab1\\Properties\\Netralization.html");
         }
-
         private void текстовыйToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TPROMER();
         }
         private void TPROMER()
         {
+            richTextBox1.Text = "COMPLEX ::z=(2.0,3.0);";
 
-            HtmlHelper.OpenInBrowser("Properties\\TEST.html\"");
         }
-
         private void списокЛитературыToolStripMenuItem_Click(object sender, EventArgs e)
         {
             LITER();
@@ -1078,16 +1094,15 @@ namespace Lab1
         private void LITER()
         {
 
-            HtmlHelper.OpenInBrowser("Properties\\LITER.html");
+            OpenInBrowser(@"C:\Users\ryysl\source\repos\Lab1\Lab1\Properties\LITER.html");
         }
-
         private void исходныйКодПрограммыToolStripMenuItem_Click(object sender, EventArgs e)
         {
             KAODPROG();
         }
         private void KAODPROG()
         {
-            HtmlHelper.OpenInBrowser("Properties\\KOD.html");
+            OpenInBrowser(@"C:\Users\ryysl\source\repos\Lab1\Lab1\Properties\KOD.html");
         }
         private void Pol()
         {
@@ -1109,7 +1124,6 @@ namespace Lab1
 
             richTextBox2.Text = string.Join(" ", poliz);
         }
-
         private List<string> ConvertToPoliz(List<Token> tokens)
         {
             List<string> poliz = new List<string>();
@@ -1149,6 +1163,9 @@ namespace Lab1
                     case TokenType.открывающая_скобка:
                         stack.Push(token);
                         openingBrackets++;
+                        break;
+                    case TokenType.ERROR:
+                        DisplayErrors(new List<string> { "Ошибка" });
                         break;
                     case TokenType.Закрывающая_скобка:
                         if (!stack.Any())
@@ -1190,7 +1207,6 @@ namespace Lab1
 
             return poliz;
         }
-
         private static int GetPriority(TokenType type)
         {
             switch (type)
@@ -1208,7 +1224,6 @@ namespace Lab1
                     return 0;
             }
         }
-
         public void DisplayErrors(List<string> errors)
         {
             dataGridView2.DataSource = null;
@@ -1223,8 +1238,8 @@ namespace Lab1
             }
 
             // Очистка данных в dataGridView2
-           
-            
+
+
             // Добавление столбца для вывода ошибок
             dataGridView2.Columns.Add("Error", "Ошибка");
 
@@ -1238,15 +1253,13 @@ namespace Lab1
         {
 
         }
-
-        // 9
         private void FindWordsEndingWithT()
         {
             string inputText = richTextBox1.Text;
             List<(string word, int startIndex)> wordsEndingWithT = new List<(string, int)>();
 
             // Используем регулярное выражение для поиска слов, заканчивающихся на "t" или "T"
-            Regex regex = new Regex(@"\b\w*[tT]\b");
+            Regex regex = new Regex(@"(\b\w*[^tT]\b)");
 
             MatchCollection matches = regex.Matches(inputText);
 
@@ -1256,7 +1269,7 @@ namespace Lab1
             }
 
             // Выводим найденные слова в RichTextBox2
-            richTextBox2.Text = string.Join(Environment.NewLine, wordsEndingWithT.Select(word => $"{word.word} (позиция: {word.startIndex})"));
+            richTextBox2.Text = string.Join(Environment.NewLine, wordsEndingWithT.Select(word => $"{word.word} (начальная позиция: {word.startIndex})"));
         }
         private void FindWordsEndingWithT2()
         {
@@ -1273,7 +1286,7 @@ namespace Lab1
             {
                 foreach (Match match in matches)
                 {
-                    richTextBox2.AppendText($"Год: {match.Value}, Позиция: {match.Index}" + Environment.NewLine);
+                    richTextBox2.AppendText($"Год: {match.Value}, (начальная позиция: {match.Index})" + Environment.NewLine);
                 }
             }
             else
@@ -1303,30 +1316,226 @@ namespace Lab1
                 richTextBox2.AppendText($"{time.time} (начальная позиция: {time.startIndex}){Environment.NewLine}");
             }
         }
-
         private void лаборатрнаяРабота6ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Pol();
         }
-
         private void лаборатрнаяРабота6ToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-          
-        }
 
+        }
         private void часть1ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FindWordsEndingWithT();
         }
-
         private void часть2ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FindWordsEndingWithT2();
         }
-
         private void часть3ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FindTimes();
         }
+
+        private void лабораторнаяРабота7ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            richTextBox2.Clear();
+            Scan();
+            string input = richTextBox1.Text;
+            RecursiveDescentParser parser = new RecursiveDescentParser(input, richTextBox2);
+            parser.Parse();
+
+        }
+        public class RecursiveDescentParser
+        {
+            private List<string> tokens;
+            private int currentTokenIndex;
+            private RichTextBox output;
+
+            public RecursiveDescentParser(string input, RichTextBox output)
+            {
+                tokens = new List<string>(input.Split(new char[] { ' ', '\t', '\n', ';' }, StringSplitOptions.RemoveEmptyEntries));
+                currentTokenIndex = 0;
+                this.output = output;
+                output.Clear();
+            }
+
+            private string CurrentToken()
+            {
+                if (currentTokenIndex < tokens.Count)
+                {
+                    return tokens[currentTokenIndex];
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
+            private void Advance()
+            {
+                currentTokenIndex++;
+            }
+
+            public void Parse()
+            {
+                try
+                {
+                    BeginStmt();
+                    if (currentTokenIndex < tokens.Count)
+                    {
+                        throw new Exception("Токен после end");
+                    }
+                    output.AppendText("Успешно отпарсено.\n");
+                }
+                catch (Exception e)
+                {
+                    output.AppendText($"Error: {e.Message}\n");
+                }
+            }
+
+            private void BeginStmt()
+            {
+                if (CurrentToken() == "begin")
+                {
+                    output.AppendText("begin-stmt -> begin stmt-list end\n");
+                    Advance();
+                    StmtList();
+                    if (CurrentToken() == "end")
+                    {
+                        Advance();
+                    }
+                    else
+                    {
+                        throw new Exception("Ожидает 'end'");
+                    }
+                }
+                else
+                {
+                    throw new Exception("Ожидает 'begin'");
+                }
+            }
+
+            private void StmtList()
+            {
+                output.AppendText("stmt-list -> stmt | stmt ; stmt-list\n");
+                Stmt();
+                while (CurrentToken() == null || CurrentToken() == ";")
+                {
+                    if (CurrentToken() == ";")
+                    {
+                        Advance();
+                    }
+                    if (CurrentToken() == "end")
+                    {
+                        break;
+                    }
+                    Stmt();
+                }
+            }
+
+            private void Stmt()
+            {
+                output.AppendText("stmt -> begin-stmt | assg-stmt\n");
+                if (CurrentToken() == "begin")
+                {
+                    BeginStmt();
+                }
+                else
+                {
+                    AssgStmt();
+                }
+            }
+
+            private void AssgStmt()
+            {
+                output.AppendText("assg-stmt -> VAR := arith-expr\n");
+                if (IsVar(CurrentToken()))
+                {
+                    Advance();
+                    if (CurrentToken() == ":=")
+                    {
+                        Advance();
+                        ArithExpr();
+                    }
+                    else
+                    {
+                        throw new Exception("Ожидает ':='");
+                    }
+                }
+                else
+                {
+                    throw new Exception("Ожидает переменную");
+                }
+            }
+
+            private void ArithExpr()
+            {
+                output.AppendText("arith-expr -> VAR | NUM | ( arith-expr ) | arith-expr + arith-expr | arith-expr * arith-expr\n");
+                if (IsVar(CurrentToken()) || IsNum(CurrentToken()))
+                {
+                    Advance();
+                }
+                else if (CurrentToken() == "(")
+                {
+                    Advance();
+                    ArithExpr();
+                    if (CurrentToken() == ")")
+                    {
+                        Advance();
+                    }
+                    else
+                    {
+                        throw new Exception("Ожидает ')'");
+                    }
+                }
+                else if (CurrentToken() == "+")
+                {
+                    Advance();
+                    ArithExpr();
+                }
+                else if (CurrentToken() == "*")
+                {
+                    Advance();
+                    ArithExpr();
+                }
+                else
+                {
+                    throw new Exception("Ожидает переменную число или '('");
+                }
+            }
+
+            private bool IsVar(string token)
+            {
+                if (!string.IsNullOrEmpty(token) && char.IsLetter(token[0]))
+                {
+                    foreach (char c in token)
+                    {
+                        if (!char.IsLetterOrDigit(c))
+                        {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+                return false;
+            }
+
+            private bool IsNum(string token)
+            {
+                if (!string.IsNullOrEmpty(token))
+                {
+                    foreach (char c in token)
+                    {
+                        if (!char.IsDigit(c))
+                        {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+                return false;
+            }
+        }
     }
- }
+}
