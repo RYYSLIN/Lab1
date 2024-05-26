@@ -216,7 +216,8 @@ COMPLEX:: XEZ121 =(+42,-4.0)
 
 
 
-![image](https://github.com/RYYSLIN/Lab1/assets/160394383/bdb16758-d2fa-4841-aefd-35f9b55b1e5b)
+![image](https://github.com/RYYSLIN/Lab1/assets/160394383/db0cd2ae-1c15-4d4d-8078-13ac80903109)
+
 
 
 
@@ -225,5 +226,7 @@ COMPLEX:: XEZ121 =(+42,-4.0)
 
 
 
+![image](https://github.com/RYYSLIN/Lab1/assets/160394383/1c5d8621-65e5-431c-ba88-6fa7ff8350dc)
 
 
+![image](https://github.com/RYYSLIN/Lab1/assets/160394383/86893be4-6997-4fef-bd5e-0827dd2265c8)
