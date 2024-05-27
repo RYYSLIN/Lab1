@@ -215,14 +215,11 @@ COMPLEX:: XEZ121 =(+42,-4.0)
 
 
 
+![image](https://github.com/RYYSLIN/Lab1/assets/160394383/b4648f25-5cc2-4f3a-aa9d-e2c6013a87e3)
+
+
 
 ![image](https://github.com/RYYSLIN/Lab1/assets/160394383/db0cd2ae-1c15-4d4d-8078-13ac80903109)
-
-
-
-
-
-![image](https://github.com/RYYSLIN/Lab1/assets/160394383/fa065056-c5cb-4397-8d44-32e682e9c62b)
 
 
 
